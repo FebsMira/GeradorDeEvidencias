@@ -14,7 +14,7 @@ public class RftToWord {
 		
 		Thread.sleep(5000);
 		
-		word.inserirEvidencia("Teste", true, true);
+		word.inserirEvidencia("Teste", false, true);
 		
 		word.finalizarEvidencia();
 	}

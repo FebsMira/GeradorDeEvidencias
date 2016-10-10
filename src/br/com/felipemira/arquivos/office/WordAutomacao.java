@@ -25,8 +25,6 @@ public class WordAutomacao {
 	private String caminhoTemplate;
 	private String caminhoImagem;
 	private String caminhoDoc;
-	
-	@SuppressWarnings("unused")
 	private int countFalhou = 0;
 	
 	/**
@@ -85,8 +83,13 @@ public class WordAutomacao {
         }else{
         	System.out.println("templateEvidencia.docx não consta na pasta informada!");
         }
-        WordIterator.inserirCabecalho(this.caminhoDoc, document, this.nomeArquivo, this.horaExecucao);
         
+        //Insere o nome do CT na tabela um, primeira linha da primeira coluna.
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
+        //Insere a hora de execução na tabela um, primeira linha da segunda coluna.
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
+        
+        //Insere o título no documento word.
         WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
         
 	}
@@ -188,7 +191,15 @@ public class WordAutomacao {
 		CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
 	    document = copiaDocumento;
 	    
-	    WordIterator.inserirDuracao(this.caminhoDoc, document, calcularDuracao());
+	    //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
+	    WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 1, calcularDuracao());
+	    
+	    //Insere o Status do caso de teste na tabela.
+	    if(this.countFalhou == 1){
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 0, "Falhou");
+	    }else{
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 0, "Passou");
+	    }
 	    
 	    ConvertToPDF.convert(this.caminhoDoc, this.nomeComHora);
 	}

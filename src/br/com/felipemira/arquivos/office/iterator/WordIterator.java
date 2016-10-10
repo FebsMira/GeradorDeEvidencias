@@ -24,63 +24,6 @@ import br.com.felipemira.arquivos.office.custom.document.CustomXWPFDocument;
 public class WordIterator {
 	
 	/**
-	 * Insere dados em um cabeçalho 2x2 no template word.
-	 * @param caminhoDoc - String
-	 * @param documento - CustomXWPFDocument
-	 * @param titulo - String
-	 * @param horaExecucao - String
-	 * @throws IOException
-	 */
-	public static void inserirCabecalho(String caminhoDoc, CustomXWPFDocument documento, String titulo, String horaExecucao) throws IOException{
-		XWPFTable table = documento.getTableArray(0);
-		
-		XWPFRun casoDeTeste = table.getRow(0).getCell(0).getParagraphs().get(0).createRun();
-		casoDeTeste.setBold(false);
-		casoDeTeste.setFontSize(10);
-		casoDeTeste.setFontFamily("Verdana");
-		casoDeTeste.setColor("000000");
-		casoDeTeste.setText(" " + titulo);
-		
-		XWPFRun horaDeExecucao = table.getRow(0).getCell(1).getParagraphs().get(0).createRun();
-		horaDeExecucao.setBold(false);
-		horaDeExecucao.setFontSize(10);
-		horaDeExecucao.setFontFamily("Verdana");
-		horaDeExecucao.setColor("000000");
-		horaDeExecucao.setText(" " + horaExecucao);
-		
-		FileOutputStream outStream = null;
-        outStream = new FileOutputStream(caminhoDoc);
-        
-        documento.write(outStream);
-        outStream.close();
-		
-	}
-	
-	/**
-	 * Insere a duracao da execução no arquivo word.
-	 * @param caminhoDoc - String
-	 * @param documento - CustomXWPFDocument
-	 * @param duracao - String
-	 * @throws IOException
-	 */
-	public static void inserirDuracao(String caminhoDoc, CustomXWPFDocument documento, String duracao) throws IOException{
-		XWPFTable table = documento.getTableArray(0);
-		
-		XWPFRun casoDeTeste = table.getRow(1).getCell(1).getParagraphs().get(0).createRun();
-		casoDeTeste.setBold(false);
-		casoDeTeste.setFontSize(10);
-		casoDeTeste.setFontFamily("Verdana");
-		casoDeTeste.setColor("000000");
-		casoDeTeste.setText(" " + duracao);
-		
-		FileOutputStream outStream = null;
-        outStream = new FileOutputStream(caminhoDoc);
-        
-        documento.write(outStream);
-        outStream.close();
-	}
-	
-	/**
 	 * Insere um Titulo no arquivo word
 	 * @param caminhoDoc - String
 	 * @param documento - CustomXWPFDocument
@@ -158,5 +101,33 @@ public class WordIterator {
         outStream = new FileOutputStream(caminhoDoc);
         documento.write(outStream);
         outStream.close();
+	}
+	
+	/**
+	 * Insere dados em uma tabela especificada pelo número.
+	 * @param caminhoDoc - String com o caminho.
+	 * @param documento - CustomXWPFDocument.
+	 * @param numeroTabela - int - Começa com 0.
+	 * @param numeroLinha - int - começa com 0.
+	 * @param numeroColuna - int - começa com 0.
+	 * @param dado - String a ser inserida.
+	 * @throws IOException
+	 */
+	public static void inserirDadoTabela(String caminhoDoc, CustomXWPFDocument documento, int numeroTabela, int numeroLinha, int numeroColuna, String dado) throws IOException{
+		XWPFTable table = documento.getTableArray(numeroTabela);
+		
+		XWPFRun casoDeTeste = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
+		casoDeTeste.setBold(false);
+		casoDeTeste.setFontSize(10);
+		casoDeTeste.setFontFamily("Verdana");
+		casoDeTeste.setColor("000000");
+		casoDeTeste.setText(" " + dado);
+		
+		FileOutputStream outStream = null;
+        outStream = new FileOutputStream(caminhoDoc);
+        
+        documento.write(outStream);
+        outStream.close();
+		
 	}
 }
