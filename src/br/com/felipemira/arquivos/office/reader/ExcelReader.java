@@ -35,12 +35,16 @@ public class ExcelReader {
 	 * @throws IOException
 	 */
 	public Map<Integer, CasoDeTeste> readerDelimited(int linhaInicio, int linhaFim) throws IOException{
+		//instância um Map que retornará para a classe que chamou o método os casos de teste que o Excel contém, nas linhas delimitadas.
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
 		
+		//Leitor de arquivos recebe o excel informado.
 		FileInputStream inputStream = new FileInputStream(new File(caminhoExcel));
 		
+		//O Workbook do POI recebe o excel.
 		Workbook workbook = new XSSFWorkbook(inputStream);
 		
+		//A lista de casos de teste recebe o Map com todos os casos de teste lidos.
 		listaCasosDeTeste = readerRows(workbook, linhaInicio, linhaFim);
 		
 		workbook.close();
@@ -70,6 +74,7 @@ public class ExcelReader {
 		
 		int countLinha = 0;
 		
+		//Instância de um objeto CasoDeTeste, para ser preenchida e adicionada a lista.
 		CasoDeTeste casoDeTeste = new CasoDeTeste();
 		
 		//Contador responsável por contar a quantidade dos casos de testes e de atribuir a chave para o Map.
@@ -78,16 +83,20 @@ public class ExcelReader {
 		//Lista que receberá os casos de testes.
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
 		
+		//Percorre as linhas informadas.
 		while((iterator.hasNext() && countLinha == 0) || (iterator.hasNext() && countLinha <= (linhaFim - 1))){
 			row = (Row) iterator.next();
 			
 			if(countLinha >= (linhaInicio-1) && countLinha <= (linhaFim - 1)){
 				//readerCells(row, colunaInicio, colunaFim);
 				
-				//Se o caso de teste chega ao fim, é criado um novo objeto de caso de teste.
+				//Lê cada uma das células da linha, se não encontrar nada na célula 8 ou 9 é sinalizado que acabou os passos do caso de teste.
 				if(readerCellsDelimited(casoDeTeste, row, colunaInicio, colunaFim)){
+					//Se o Caso de Teste chegou ao fim implementa o contador, que é o controle para adição de elementos no Map.
 					countCasosDeTeste ++;
+					//Preenche o Map com o caso de teste, com a Key do contador.
 					listaCasosDeTeste.put(countCasosDeTeste, casoDeTeste);
+					//Cria uma nova instância para o objeto casoDeTeste.
 					casoDeTeste = new CasoDeTeste();
 				}
 			}
@@ -143,21 +152,27 @@ public class ExcelReader {
 	 * @return boolean - se acabou o caso de teste retorna true;
 	 */
 	private static boolean readerCellsDelimited(CasoDeTeste casoDeTeste, Row row, int colunaInicio, int colunaFim){
-		
+		//Variável que irá controlar se o caso de teste chegou ao fim.
 		boolean finalCasoDeTeste = false;
 		
 		for(int i = colunaInicio - 1; i < colunaFim; i++){
 			if(row.getCell(i) != null){
+				
 				if(row.getCell(i).getCellType() == Cell.CELL_TYPE_STRING){
-					System.out.println(row.getCell(i).getStringCellValue());
+					
+					//Se o elemento que está sendo puxado do excel não for vazio ele adicionará o elemento ao caso de teste passado na chamada do método.
 					if(!row.getCell(i).getStringCellValue().equals("")){
 						CasoDeTesteIterator.gravarDados(casoDeTeste, i, row.getCell(i).getStringCellValue());
 					}
+					
 				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_NUMERIC){
-					System.out.println(row.getCell(i).getNumericCellValue());
+					
+					//Se o elemento que está sendo puxado do excel não for vazio ele adicionará o elemento ao caso de teste passado na chamada do método.
 					if(!String.valueOf(row.getCell(i).getNumericCellValue()).equals("")){
 						CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(row.getCell(i).getNumericCellValue()));
 					}
+				
+				//Se o elemento for em branco irá verificar os índices 8 e 9.
 				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_BLANK){
 					switch(i){
 						case 1:
@@ -168,6 +183,7 @@ public class ExcelReader {
 						case 6:
 						case 7:
 							break;
+						//Se for a célula com índice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a função que chamou que o Caso de Teste chegou ao fim.
 						case 8:
 						case 9:
 							finalCasoDeTeste = true;
@@ -178,6 +194,8 @@ public class ExcelReader {
 							break;
 					}	
 				}
+				
+			//Para efeito de células null, o leitor passará sobre elas sem nenhum problema.
 			}else{
 				switch(i){
 					case 1:
@@ -188,6 +206,7 @@ public class ExcelReader {
 					case 6:
 					case 7:
 						break;
+					//Se for a célula com índice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a função que chamou que o Caso de Teste chegou ao fim.
 					case 8:
 					case 9:
 						finalCasoDeTeste = true;
@@ -199,6 +218,8 @@ public class ExcelReader {
 				}	
 			}
 		}
+		
+		//Retorna se o caso de teste chegou ao fim.
 		if(finalCasoDeTeste){
 			return true;
 		}else{

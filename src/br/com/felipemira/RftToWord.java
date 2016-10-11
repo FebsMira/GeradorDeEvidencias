@@ -16,14 +16,25 @@ public class RftToWord {
 		
 		ExcelReader leitorRTF = new ExcelReader("C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\RTFs\\RTF - Nova Consulta - Exemplos.xlsx");
 		
-		listaCasosDeTeste = leitorRTF.readerDelimited(12, 22);
+		listaCasosDeTeste = leitorRTF.readerDelimited(12, 57);
 		
 		@SuppressWarnings("rawtypes")
 		Iterator iterator = listaCasosDeTeste.keySet().iterator();
 		
 		while(iterator.hasNext()){
 			CasoDeTeste casoDeTeste = (CasoDeTeste) listaCasosDeTeste.get(iterator.next());
-			System.out.println(casoDeTeste.getCenarioDeTeste());
+			System.out.println("\nCenário Caso de teste: " + casoDeTeste.getCenarioDeTeste() + "\n");
+			
+			Map<Integer, String> procedimentosDeExecucao = casoDeTeste.getProcedimentosDeExecucao();
+			
+			@SuppressWarnings("rawtypes")
+			Iterator iteratorProcedimentos = procedimentosDeExecucao.keySet().iterator();
+			
+			System.out.println("Procedimentos: \n");
+			while(iteratorProcedimentos.hasNext()){
+				String procedimento = (String) procedimentosDeExecucao.get(iteratorProcedimentos.next());
+				System.out.println(procedimento);
+			}
 		}
 		
 		//leitorRTF.readerDelimited(12, 12, 13, 13);
