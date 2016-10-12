@@ -15,6 +15,7 @@ import br.com.felipemira.arquivos.office.custom.document.CustomXWPFDocument;
 import br.com.felipemira.arquivos.office.iterator.WordIterator;
 import br.com.felipemira.convert.ConvertToPDF;
 import br.com.felipemira.copy.Copy;
+import br.com.felipemira.objects.object.CasoDeTeste;
 
 public class WordAutomacao {
 	
@@ -26,6 +27,7 @@ public class WordAutomacao {
 	private String caminhoImagem;
 	private String caminhoDoc;
 	private int countFalhou = 0;
+	private CustomXWPFDocument document;
 	
 	/**
 	 * Cria um documento Word através do template.
@@ -34,7 +36,7 @@ public class WordAutomacao {
 	 * @param caminhoTemplate - String.
 	 * @param caminhoImagem - String.
 	 */
-	public WordAutomacao(String nomeArquivo, String caminhoDoc, String caminhoTemplate, String caminhoImagem){
+	public WordAutomacao(String nomeArquivo, String caminhoDoc, String caminhoTemplate, String caminhoImagem, CasoDeTeste casoDeTeste){
 		
 		this.nomeArquivo = nomeArquivo;
 		this.caminhoDoc = caminhoDoc;
@@ -42,9 +44,9 @@ public class WordAutomacao {
 		this.caminhoImagem = caminhoImagem;
 		
 		try {
-			criarDocumento();
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			criarDocumento(casoDeTeste);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -52,7 +54,7 @@ public class WordAutomacao {
 	 * Pega o templete da evidência e cria um novo documento word.
 	 * @throws IOException
 	 */
-	private void criarDocumento() throws IOException{
+	private void criarDocumento(CasoDeTeste casoDeTeste) throws IOException{
 		//Pega a hora que foi criado o documento.
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Calendar cal = Calendar.getInstance();
@@ -77,21 +79,27 @@ public class WordAutomacao {
         	File copiaFile = new File(caminhoDoc);
         	Copy.copyFile(file, copiaFile);
         	InputStream arquivo = new FileInputStream(caminhoDoc);
-	        @SuppressWarnings("resource")
 			CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
 	        document = copiaDocumento;
+	        this.document = document;
         }else{
         	System.out.println("templateEvidencia.docx não consta na pasta informada!");
         }
         
         //Insere o nome do CT na tabela um, primeira linha da primeira coluna.
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
+        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
         //Insere a hora de execução na tabela um, primeira linha da segunda coluna.
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
+        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
         
         //Insere o título no documento word.
-        WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
+        //WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
         
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, casoDeTeste.getItemDeReferencia());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 3, this.horaExecucao.substring(0, 10));
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCasoDeTesteCondicao());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, casoDeTeste.getNomeDoTestador());
 	}
 	
 	
@@ -131,16 +139,11 @@ public class WordAutomacao {
 	 * @throws InvalidFormatException
 	 */
 	private void gerarEvidencia(String mensagem, Boolean geraImagem) throws IOException, AWTException, InvalidFormatException{
-		CustomXWPFDocument document = null;
-        InputStream arquivo = new FileInputStream(this.caminhoDoc);
-		CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
-	    document = copiaDocumento;
-       
 	    if(geraImagem){
-	    	WordIterator.inserirTexto(this.caminhoDoc, document, mensagem);
-	    	WordIterator.inserirImagem(this.caminhoDoc, document, this.caminhoImagem);
+	    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
+	    	WordIterator.inserirImagem(this.caminhoDoc, this.document, this.caminhoImagem);
 	    }else{
-	    	WordIterator.inserirTexto(this.caminhoDoc, document, mensagem);
+	    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
 	    }
 	}
 	
@@ -186,21 +189,35 @@ public class WordAutomacao {
 	 * @throws IOException
 	 */
 	public void finalizarEvidencia() throws IOException{
-		CustomXWPFDocument document = null;
-        InputStream arquivo = new FileInputStream(this.caminhoDoc);
-		CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
-	    document = copiaDocumento;
 	    
 	    //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
-	    WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 1, calcularDuracao());
+	    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao());
 	    
 	    //Insere o Status do caso de teste na tabela.
 	    if(this.countFalhou == 1){
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 0, "Falhou");
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Falhou");
 	    }else{
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 0, "Passou");
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Passou");
 	    }
 	    
 	    ConvertToPDF.convert(this.caminhoDoc, this.nomeComHora);
+	}
+	
+	/**
+	 * Insere dados em uma tabela especificada pelo número.
+	 * @param caminhoDoc - String com o caminho.
+	 * @param documento - CustomXWPFDocument.
+	 * @param numeroTabela - int - Começa com 0.
+	 * @param numeroLinha - int - começa com 0.
+	 * @param numeroColuna - int - começa com 0.
+	 * @param dado - String a ser inserida.
+	 * @throws IOException
+	 */
+	public void inserirDadoTabela(int numeroTabela, int numeroLinha, int numeroColuna, String dado){
+		try {
+			WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, numeroTabela, numeroLinha, numeroColuna, dado);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
