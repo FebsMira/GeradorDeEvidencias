@@ -83,7 +83,7 @@ public class WordAutomacao {
 	        document = copiaDocumento;
 	        this.document = document;
         }else{
-        	System.out.println("templateEvidencia.docx não consta na pasta informada!");
+        	System.out.println("Template não consta na pasta informada!");
         }
         
         //Insere o nome do CT na tabela um, primeira linha da primeira coluna.
@@ -99,7 +99,7 @@ public class WordAutomacao {
         WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste());
         WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste());
         WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCasoDeTesteCondicao());
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, casoDeTeste.getNomeDoTestador());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, (casoDeTeste.getNomeDoTestador() == null)? " - " : casoDeTeste.getNomeDoTestador());
 	}
 	
 	

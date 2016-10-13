@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import br.com.felipemira.arquivos.office.WordAutomacao;
 import br.com.felipemira.arquivos.office.reader.ExcelReader;
 import br.com.felipemira.objects.object.CasoDeTeste;
@@ -17,9 +19,9 @@ public class RftToWord {
 		
 		ExcelReader leitorRTF = new ExcelReader("C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\RTFs\\RTF - Nova Consulta - Exemplos.xlsx");
 		
+		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 21);
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 57);
-		
-		listaCasosDeTeste = leitorRTF.readerDelimited(12, 22);
+		listaCasosDeTeste = leitorRTF.readerDelimited(12, 1325);
 		
 		@SuppressWarnings("rawtypes")
 		Iterator iterator = listaCasosDeTeste.keySet().iterator();
@@ -50,6 +52,8 @@ public class RftToWord {
 				System.out.println(procedimento);
 			}
 		}
+		
+		JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 }

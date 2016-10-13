@@ -91,7 +91,7 @@ public class ExcelReader {
 				//readerCells(row, colunaInicio, colunaFim);
 				
 				//Lê cada uma das células da linha, se não encontrar nada na célula 8 ou 9 é sinalizado que acabou os passos do caso de teste.
-				if(readerCellsDelimited(casoDeTeste, row, colunaInicio, colunaFim)){
+				if(readerCellsDelimited(casoDeTeste, row, colunaInicio, colunaFim) || row.getRowNum() == (linhaFim - 1)){
 					//Se o Caso de Teste chegou ao fim implementa o contador, que é o controle para adição de elementos no Map.
 					countCasosDeTeste ++;
 					//Preenche o Map com o caso de teste, com a Key do contador.
