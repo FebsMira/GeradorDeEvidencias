@@ -59,8 +59,5 @@ public class RftToWord {
 				System.out.println(procedimento);
 			}
 		}
-		
-		JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
 	}
-
 }

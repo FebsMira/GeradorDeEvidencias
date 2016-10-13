@@ -20,6 +20,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -31,6 +32,7 @@ public class GeradorDeEvidencias extends Application{
 	public void start(Stage stage) throws Exception {
 		AnchorPane pane = new AnchorPane();
 		pane.setPrefSize(800, 300);
+		pane.setStyle("-fx-background-color:linear-gradient(from 200% 0% to 100% 100%, white 0%, #FFD401 100%)");
 		
 		Label labelModel = new Label("Local do Modelo.docx:");
 		TextField txModel = new TextField();
@@ -55,6 +57,7 @@ public class GeradorDeEvidencias extends Application{
 	            }
 	        }
 	    });
+		
 		
 		Label labelLinhaFim = new Label("Linha Fim:");
 		TextField txLinhaFinal = new TextField();
@@ -88,10 +91,12 @@ public class GeradorDeEvidencias extends Application{
 		};
 		progressBar.setProgress(new Float(0f));
 	    
+		ImageView imagem = new ImageView();
+		imagem.setImage(new Image(getClass().getResourceAsStream("Inmetrics2.jpg")));
 		
 		Label labelBy = new Label("By Felipe Mira");
 		
-		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, labelBy);
+		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, labelBy);
 		
 		Scene scene = new Scene(pane);
 		stage.setScene(scene);
@@ -134,13 +139,20 @@ public class GeradorDeEvidencias extends Application{
 		txLinhaFinal.setPrefWidth(50);
 		txLinhaFinal.setLayoutY(140);
 		
-		btnExecutar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2));
+		btnExecutar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 80);
 		btnExecutar.setLayoutY(210);
+		
+		imagem.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 330);
+		imagem.setFitHeight(70);
+		imagem.setFitWidth(170);
+		imagem.setLayoutY(190);
 		
 		progressBar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
 		progressBar.setLayoutY(280);
 		
 		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
+		labelBy.setScaleY(0.5);
+		labelBy.setScaleX(0.5);
 		labelBy.setLayoutY(280);
 		
 		txModel.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -228,6 +240,7 @@ public class GeradorDeEvidencias extends Application{
 			                            if (newState == Worker.State.SUCCEEDED) {
 			                            	progressBar.progressProperty().unbind();
 			                            	progressBar.setProgress(new Float(0f));
+			                            	JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
 			                            }
 			                        }
 			                    });
@@ -239,6 +252,7 @@ public class GeradorDeEvidencias extends Application{
 			                            if (newState == Worker.State.SUCCEEDED) {
 			                            	progressBar.progressProperty().unbind();
 			                            	progressBar.setProgress(new Float(0f));
+			                            	JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
 			                            }
 			                        }
 			                    });
