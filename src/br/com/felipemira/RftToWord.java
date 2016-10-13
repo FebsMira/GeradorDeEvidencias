@@ -13,15 +13,17 @@ import br.com.felipemira.objects.object.CasoDeTeste;
 
 public class RftToWord {
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void executar(String caminhoSalvar, String caminhoModelo, String caminhoExcel, int linhaInicio, int linhaFim) throws InterruptedException, IOException {
 		
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
 		
-		ExcelReader leitorRTF = new ExcelReader("C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\RTFs\\RTF - Nova Consulta - Exemplos.xlsx");
+		//ExcelReader leitorRTF = new ExcelReader("C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\RTFs\\RTF - Nova Consulta - Exemplos.xlsx");
+		ExcelReader leitorRTF = new ExcelReader(caminhoExcel);
 		
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 21);
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 57);
-		listaCasosDeTeste = leitorRTF.readerDelimited(12, 1325);
+		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 1325);
+		listaCasosDeTeste = leitorRTF.readerDelimited(linhaInicio, linhaFim);
 		
 		@SuppressWarnings("rawtypes")
 		Iterator iterator = listaCasosDeTeste.keySet().iterator();
@@ -29,10 +31,15 @@ public class RftToWord {
 		while(iterator.hasNext()){
 			CasoDeTeste casoDeTeste = (CasoDeTeste) listaCasosDeTeste.get(iterator.next());
 			
-			WordAutomacao word = new WordAutomacao(casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste()
+			/*WordAutomacao word = new WordAutomacao(casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste()
 					, "C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\Evidencias\\"
 					, "C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\Template\\Modelo "+ casoDeTeste.getProcedimentosDeExecucao().size() +".docx"
-					, "C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\Template\\evidencia.png", casoDeTeste);
+					, "C:\\Users\\Felipe Mira\\Documents\\WordToPDF\\Template\\evidencia.png", casoDeTeste);*/
+			
+			WordAutomacao word = new WordAutomacao(casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste()
+			, caminhoSalvar + "\\"
+			, caminhoModelo + "\\Modelo " + casoDeTeste.getProcedimentosDeExecucao().size() +".docx"
+			, caminhoModelo + "\\evidencia.png", casoDeTeste);
 			
 			System.out.println("\nCenário Caso de teste: " + casoDeTeste.getCenarioDeTeste() + "\n");
 			
