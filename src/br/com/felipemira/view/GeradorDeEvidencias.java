@@ -1,8 +1,6 @@
 package br.com.felipemira.view;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 
 import br.com.felipemira.RftToWord;
 import javafx.application.Application;
@@ -15,7 +13,10 @@ import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -24,30 +25,85 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class GeradorDeEvidencias extends Application{
 	
+	private Scene scene;
+	private Image applicationIcon;
+	
+	private AnchorPane pane;
+	private Label labelModel, labelSalvar, labelArquivoRTF, labelLinhaInicio, labelLinhaFim, labelBy;
+	private TextField txModel, txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal;
+	private Button btnExecutar;
+	private ProgressBar progressBar;
+	private ImageView imagem;
+	
+	private String iconeAplicativo = "Inmetrics.png";
+	
+	private static Stage stage;
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private Service<Void> servico = new Service(){
+		@Override
+        protected Task createTask() {
+            return new Task() {
+            	@Override
+                protected Void call() throws Exception {
+            		RftToWord.executar(txSalvar.getText(), txModel.getText(), txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
+            		return null;
+            	}
+        	};
+	 	}	
+	};
+	
 	@Override
 	public void start(Stage stage) throws Exception {
-		AnchorPane pane = new AnchorPane();
+		initComponents();
+		initListeners();
+		
+		stage.setScene(scene);
+		stage.setTitle("Gerador de Evidências");
+		stage.resizableProperty().set(false);
+		applicationIcon = new Image(getClass().getResourceAsStream(iconeAplicativo));
+		stage.getIcons().add(applicationIcon);
+		stage.show();
+		
+		initLayout();
+		GeradorDeEvidencias.stage = stage;
+	}
+	
+	public static void main(String[] args){
+		launch(args);
+	}
+	
+	public static Stage getStage(){
+		return stage;
+	}
+	
+	private void initComponents(){
+		pane = new AnchorPane();
 		pane.setPrefSize(800, 300);
 		pane.setStyle("-fx-background-color:linear-gradient(from 200% 0% to 100% 100%, white 0%, #FFD401 100%)");
 		
-		Label labelModel = new Label("Local do Modelo.docx:");
-		TextField txModel = new TextField();
+		
+		labelModel = new Label("Local do Modelo.docx:");
+		txModel = new TextField();
 		txModel.setPromptText("Local do Modelo.docx.");
 		
-		Label labelSalvar = new Label("Salvar em:");
-		TextField txSalvar = new TextField();
+		labelSalvar = new Label("Salvar em:");
+		txSalvar = new TextField();
 		txSalvar.setPromptText("Salvar em...");
 		
-		Label labelArquivoRTF = new Label("Arquivo RTF:");
-		TextField txArquivoRTF = new TextField();
+		labelArquivoRTF = new Label("Arquivo RTF:");
+		txArquivoRTF = new TextField();
 		txArquivoRTF.setPromptText("Arquivo RTF...");
 		
-		Label labelLinhaInicio = new Label("Linha Início:");
-		TextField txLinhaInicio = new TextField();
+		labelLinhaInicio = new Label("Linha Início:");
+		txLinhaInicio = new TextField();
 		txLinhaInicio.setPromptText(">=12");
 		txLinhaInicio.textProperty().addListener(new ChangeListener<String>() {
 	        @Override
@@ -58,9 +114,8 @@ public class GeradorDeEvidencias extends Application{
 	        }
 	    });
 		
-		
-		Label labelLinhaFim = new Label("Linha Fim:");
-		TextField txLinhaFinal = new TextField();
+		labelLinhaFim = new Label("Linha Fim:");
+		txLinhaFinal = new TextField();
 		txLinhaFinal.setPromptText(">=12");
 		txLinhaFinal.textProperty().addListener(new ChangeListener<String>() {
 	        @Override
@@ -71,44 +126,21 @@ public class GeradorDeEvidencias extends Application{
 	        }
 	    });
 		
-		Button btnExecutar = new Button("Executar");
+		btnExecutar = new Button("Executar");
 		
-		ProgressBar progressBar = new ProgressBar();
-		
-		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Service<Void> servico = new Service(){
-		 @SuppressWarnings("rawtypes")
-		@Override
-            protected Task createTask() {
-                return new Task() {
-                	@Override
-                    protected Void call() throws Exception {
-                		RftToWord.executar(txSalvar.getText(), txModel.getText(), txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
-                		return null;
-                	}
-            	};
-		 	}	
-		};
-		progressBar.setProgress(new Float(0f));
-	    
-		ImageView imagem = new ImageView();
+		imagem = new ImageView();
 		imagem.setImage(new Image(getClass().getResourceAsStream("Inmetrics2.jpg")));
 		
-		Label labelBy = new Label("By Felipe Mira");
+		labelBy = new Label("By Felipe Mira");
+		
+		progressBar = new ProgressBar();
+		progressBar.setProgress(new Float(0f));
 		
 		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, labelBy);
-		
-		Scene scene = new Scene(pane);
-		stage.setScene(scene);
-		stage.setTitle("Gerador de Evidências");
-		stage.resizableProperty().set(false);
-		
-		Image applicationIcon = new Image(getClass().getResourceAsStream("Inmetrics.png"));
-		stage.getIcons().add(applicationIcon);
-		
-		stage.show();
-		
-		
+		scene = new Scene(pane);
+	}
+	
+	private void initLayout(){
 		labelModel.setLayoutX(((pane.getWidth() - labelModel.getWidth()) / 2) - 300);
 		labelModel.setLayoutY(20);
 		txModel.setLayoutX(((pane.getWidth() - txModel.getWidth()) / 2) - 100);
@@ -154,7 +186,9 @@ public class GeradorDeEvidencias extends Application{
 		labelBy.setScaleY(0.5);
 		labelBy.setScaleX(0.5);
 		labelBy.setLayoutY(280);
-		
+	}
+	
+	private void initListeners(){
 		txModel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
@@ -216,7 +250,7 @@ public class GeradorDeEvidencias extends Application{
 		    		erro = true;
 		    	}
 		    	if(erro){
-		    		JOptionPane.showMessageDialog(null, mensagem, "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+		    		alert("Atenção!", mensagem);
 		    	}else{
 		    		String mensagem2 = "Verificar valor(es):\n";
 		    		if(Integer.valueOf(txLinhaInicio.getText()) < 12){
@@ -228,7 +262,7 @@ public class GeradorDeEvidencias extends Application{
 			    		erro = true;
 		    		}
 		    		if(erro){
-		    			JOptionPane.showMessageDialog(null, mensagem2, "Atenção!", JOptionPane.INFORMATION_MESSAGE);
+		    			alert("Atenção!", mensagem);
 		    		}else{
 		    			try {
 			    			progressBar.progressProperty().bind(servico.progressProperty());
@@ -240,7 +274,7 @@ public class GeradorDeEvidencias extends Application{
 			                            if (newState == Worker.State.SUCCEEDED) {
 			                            	progressBar.progressProperty().unbind();
 			                            	progressBar.setProgress(new Float(0f));
-			                            	JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
+			                            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
 			                            }
 			                        }
 			                    });
@@ -252,14 +286,13 @@ public class GeradorDeEvidencias extends Application{
 			                            if (newState == Worker.State.SUCCEEDED) {
 			                            	progressBar.progressProperty().unbind();
 			                            	progressBar.setProgress(new Float(0f));
-			                            	JOptionPane.showMessageDialog(null, "Criação de documentos referentes a RTF finalizado!", "Finalizado!", JOptionPane.INFORMATION_MESSAGE);
+			                            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
 			                            }
 			                        }
 			                    });
 			    				servico.start();
 			    			}
 						} catch (NumberFormatException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
 		    		}
@@ -268,41 +301,47 @@ public class GeradorDeEvidencias extends Application{
 		});
 	}
 	
-	public static void main(String[] args){
-		launch(args);
+	private String selecionarPasta(String texto){
+		DirectoryChooser directoryChooser = new DirectoryChooser();
+		directoryChooser.setInitialDirectory(new java.io.File("."));
+		directoryChooser.setTitle(texto);
+		File selectedDirectory = directoryChooser.showDialog(stage);
+		if(selectedDirectory == null){
+			return "null";
+		}else{
+			return selectedDirectory.toString();
+		}
 	}
 	
-	public String selecionarPasta(String texto){
-		JFileChooser chooser = new JFileChooser();
-		chooser.setCurrentDirectory(new java.io.File("."));
-		chooser.setDialogTitle(texto);
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
+	private String selecionarArquivo(String texto){
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new java.io.File("."));
+	    fileChooser.setTitle(texto);
+	    fileChooser.getExtensionFilters().addAll(
+	            new ExtensionFilter("Excel Files", "*.xlsx"));
+	    File file = fileChooser.showOpenDialog(stage);
 
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-		  System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-		  System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-		} else {
-		  System.out.println("No Selection ");
-		}
-		return String.valueOf(chooser.getSelectedFile());
+	    if (file == null){
+	        return "null";
+	    }else{
+	    	return file.getPath();
+	    }
 	}
 	
-	public String selecionarArquivo(String texto){
-		JFileChooser chooser = new JFileChooser();
-		chooser.setCurrentDirectory(new java.io.File("."));
-		chooser.setDialogTitle(texto);
-		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("XLSX files", "xlsx");
-		chooser.setFileFilter(filter);
-		chooser.setAcceptAllFileFilterUsed(false);
-
-		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-		  System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-		  System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-		} else {
-		  System.out.println("No Selection ");
-		}
-		return String.valueOf(chooser.getSelectedFile());
+	private void alert(String title, String text){
+		Alert alert = new Alert(AlertType.INFORMATION);
+		
+		alert.setTitle(title);
+    	alert.setHeaderText(text);
+    	alert.setContentText(stage.getTitle().toString());
+    	
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(getClass().getResourceAsStream(iconeAplicativo)));
+    	
+    	alert.showAndWait().ifPresent(rs -> {
+    	    if (rs == ButtonType.OK) {
+    	        System.out.println("Pressed OK.");
+    	    }
+    	});
 	}
 }
