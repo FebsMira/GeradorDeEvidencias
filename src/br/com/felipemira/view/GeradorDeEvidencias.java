@@ -42,7 +42,7 @@ public class GeradorDeEvidencias extends Application{
 	private ProgressBar progressBar;
 	private ImageView imagem;
 	
-	private String iconeAplicativo = "Inmetrics.png";
+	private String localIconeAplicativo = "br/com/felipemira/img/Mira.jpg";
 	
 	private static Stage stage;
 	
@@ -68,7 +68,7 @@ public class GeradorDeEvidencias extends Application{
 		stage.setScene(scene);
 		stage.setTitle("Gerador de Evidências");
 		stage.resizableProperty().set(false);
-		applicationIcon = new Image(getClass().getResourceAsStream(iconeAplicativo));
+		applicationIcon = new Image(localIconeAplicativo);
 		stage.getIcons().add(applicationIcon);
 		stage.show();
 		
@@ -129,7 +129,7 @@ public class GeradorDeEvidencias extends Application{
 		btnExecutar = new Button("Executar");
 		
 		imagem = new ImageView();
-		imagem.setImage(new Image(getClass().getResourceAsStream("Inmetrics2.jpg")));
+		imagem.setImage(new Image("br/com/felipemira/img/Felipe_Mira.png"));
 		
 		labelBy = new Label("By Felipe Mira");
 		
@@ -336,7 +336,7 @@ public class GeradorDeEvidencias extends Application{
     	alert.setContentText(stage.getTitle().toString());
     	
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(getClass().getResourceAsStream(iconeAplicativo)));
+		stage.getIcons().add(new Image(localIconeAplicativo));
     	
     	alert.showAndWait().ifPresent(rs -> {
     	    if (rs == ButtonType.OK) {
