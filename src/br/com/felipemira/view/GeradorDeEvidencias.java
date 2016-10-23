@@ -42,7 +42,7 @@ public class GeradorDeEvidencias extends Application{
 	private ProgressBar progressBar;
 	private ImageView imagem;
 	
-	private String localIconeAplicativo = "br/com/felipemira/img/Mira.jpg";
+	private String localIconeAplicativo = "br/com/felipemira/img/Inmetrics.png";
 	
 	private static Stage stage;
 	
@@ -58,6 +58,22 @@ public class GeradorDeEvidencias extends Application{
             	}
         	};
 	 	}	
+	};
+	
+	ChangeListener<Worker.State> listener = new ChangeListener<Worker.State>() {
+        @Override
+        public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State oldState, Worker.State newState) {
+            if (newState == Worker.State.SUCCEEDED) {
+            	progressBar.progressProperty().unbind();
+            	progressBar.setProgress(new Float(0f));
+            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
+            }
+            if(newState == Worker.State.FAILED){
+            	progressBar.progressProperty().unbind();
+            	progressBar.setProgress(new Float(0f));
+            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada com erros. \nReveja a RTF!");
+            }
+        }
 	};
 	
 	@Override
@@ -129,7 +145,7 @@ public class GeradorDeEvidencias extends Application{
 		btnExecutar = new Button("Executar");
 		
 		imagem = new ImageView();
-		imagem.setImage(new Image("br/com/felipemira/img/Felipe_Mira.png"));
+		imagem.setImage(new Image("br/com/felipemira/img/Inmetrics2.jpg"));
 		
 		labelBy = new Label("By Felipe Mira");
 		
@@ -266,30 +282,14 @@ public class GeradorDeEvidencias extends Application{
 		    		}else{
 		    			try {
 			    			progressBar.progressProperty().bind(servico.progressProperty());
-			    			if(servico.getState() == State.SUCCEEDED){
+			    			if(servico.getState() == State.SUCCEEDED || servico.getState() == State.FAILED){
 			    				servico.reset();
-			    				servico.stateProperty().addListener(new ChangeListener<Worker.State>() {
-			                        @Override
-			                        public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State oldState, Worker.State newState) {
-			                            if (newState == Worker.State.SUCCEEDED) {
-			                            	progressBar.progressProperty().unbind();
-			                            	progressBar.setProgress(new Float(0f));
-			                            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
-			                            }
-			                        }
-			                    });
+			    				servico.stateProperty().removeListener(listener);
+			    				servico.stateProperty().addListener(listener);
 			    				servico.start();
 			    			}else{
-			    				servico.stateProperty().addListener(new ChangeListener<Worker.State>() {
-			                        @Override
-			                        public void changed(ObservableValue<? extends Worker.State> observableValue, Worker.State oldState, Worker.State newState) {
-			                            if (newState == Worker.State.SUCCEEDED) {
-			                            	progressBar.progressProperty().unbind();
-			                            	progressBar.setProgress(new Float(0f));
-			                            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
-			                            }
-			                        }
-			                    });
+			    				servico.stateProperty().removeListener(listener);
+			    				servico.stateProperty().addListener(listener);
 			    				servico.start();
 			    			}
 						} catch (NumberFormatException e1) {

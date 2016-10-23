@@ -68,7 +68,7 @@ public class WordAutomacao {
         //Defino para toda a classe o caminho da minha evidencia
         this.caminhoDoc = this.caminhoDoc + this.nomeComHora + ".docx";
         
-        
+        this.caminhoDoc = this.caminhoDoc.replaceAll("/", "_");
 		CustomXWPFDocument document = null;
 		
         //Crio um file com o template.
@@ -94,12 +94,15 @@ public class WordAutomacao {
         //Insere o título no documento word.
         //WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
         
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, casoDeTeste.getItemDeReferencia());
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 3, this.horaExecucao.substring(0, 10));
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste());
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste());
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCasoDeTesteCondicao());
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, (casoDeTeste.getNomeDoTestador() == null)? " - " : casoDeTeste.getNomeDoTestador());
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, "Projeto - " + casoDeTeste.getNegocio(), true);
+        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 3, this.horaExecucao.substring(0, 10), false);
+        
+        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste(), false);
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getIdCasoDeTeste(), false);
+        
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste(), false);
+        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCasoDeTesteCondicao(), false);
+        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, (casoDeTeste.getNomeDoTestador() == null)? " - " : casoDeTeste.getNomeDoTestador(), false);
 	}
 	
 	
@@ -191,13 +194,13 @@ public class WordAutomacao {
 	public void finalizarEvidencia() throws IOException{
 	    
 	    //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
-	    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao());
+	    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao(), false);
 	    
 	    //Insere o Status do caso de teste na tabela.
 	    if(this.countFalhou == 1){
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Falhou");
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Falhou", false);
 	    }else{
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Passou");
+	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Passou", false);
 	    }
 	    
 	    ConvertToPDF.convert(this.caminhoDoc, this.nomeComHora);
@@ -211,11 +214,12 @@ public class WordAutomacao {
 	 * @param numeroLinha - int - começa com 0.
 	 * @param numeroColuna - int - começa com 0.
 	 * @param dado - String a ser inserida.
+	 * @param negrito - Boolean - se o texto deve ser em negrito.
 	 * @throws IOException
 	 */
-	public void inserirDadoTabela(int numeroTabela, int numeroLinha, int numeroColuna, String dado){
+	public void inserirDadoTabela(int numeroTabela, int numeroLinha, int numeroColuna, String dado, boolean negrito){
 		try {
-			WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, numeroTabela, numeroLinha, numeroColuna, dado);
+			WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, numeroTabela, numeroLinha, numeroColuna, dado, negrito);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

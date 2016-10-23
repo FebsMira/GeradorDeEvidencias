@@ -7,6 +7,7 @@ import br.com.felipemira.objects.object.CasoDeTeste;
 public class CasoDeTesteIterator {
 	
 	public static void gravarDados(CasoDeTeste casoDeTeste, int indice, Object dado){
+		
 		switch(indice){
 			case 1:
 				casoDeTeste.setSiglaCasoDeTeste(String.valueOf(dado));
@@ -27,7 +28,9 @@ public class CasoDeTesteIterator {
 				casoDeTeste.setRegressaoObrigatoria(String.valueOf(dado));
 				break;
 			case 7:
-				casoDeTeste.setPreCondicoes(String.valueOf(dado));
+				Map<Integer, String> preCondicoes = casoDeTeste.getPreCondicoes();
+				preCondicoes.put(preCondicoes.size() + 1, (String.valueOf(dado)));
+				casoDeTeste.setPreCondicoes(preCondicoes);
 				break;
 			case 8:
 				Map<Integer, String> procedimentosExecucao = casoDeTeste.getProcedimentosDeExecucao();

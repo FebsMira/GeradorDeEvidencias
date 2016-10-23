@@ -43,9 +43,11 @@ public class ExcelReader {
 		
 		//O Workbook do POI recebe o excel.
 		Workbook workbook = new XSSFWorkbook(inputStream);
+		//Aba do excel a ser selecionada.
+		Sheet sheet = workbook.getSheetAt(0);
 		
 		//A lista de casos de teste recebe o Map com todos os casos de teste lidos.
-		listaCasosDeTeste = readerRows(workbook, linhaInicio, linhaFim);
+		listaCasosDeTeste = readerRows(workbook, sheet, linhaInicio, linhaFim);
 		
 		workbook.close();
 		inputStream.close();
@@ -55,12 +57,13 @@ public class ExcelReader {
 	
 	/**
 	 * Percorre o excel delimitado por linha e coluna, e chama o método readerCell passando as colunas que devem ser lidas.
-	 * @param workbook - Workbook
+	 * @param workbook - Workbook.
+	 * @param sheet - Sheet.
 	 * @param linhaInicio - int.
 	 * @param linhaFim - int.
 	 */
-	private static Map<Integer, CasoDeTeste> readerRows(Workbook workbook, int linhaInicio, int linhaFim){
-		Sheet firstSheet = workbook.getSheetAt(0);
+	private static Map<Integer, CasoDeTeste> readerRows(Workbook workbook, Sheet sheet, int linhaInicio, int linhaFim){
+		Sheet firstSheet = sheet;
 		
 		Row row;
 		
@@ -76,6 +79,11 @@ public class ExcelReader {
 		
 		//Instância de um objeto CasoDeTeste, para ser preenchida e adicionada a lista.
 		CasoDeTeste casoDeTeste = new CasoDeTeste();
+		//Recebe o negócio da célula D7 do excel.
+		String negocio = readerRow(workbook, firstSheet, 7, 4);
+		//Insere o negócio no caso de teste.
+		casoDeTeste.setNegocio(negocio);
+		
 		
 		//Contador responsável por contar a quantidade dos casos de testes e de atribuir a chave para o Map.
 		int countCasosDeTeste = 0;
@@ -98,49 +106,13 @@ public class ExcelReader {
 					listaCasosDeTeste.put(countCasosDeTeste, casoDeTeste);
 					//Cria uma nova instância para o objeto casoDeTeste.
 					casoDeTeste = new CasoDeTeste();
+					//Insere o negócio no caso de teste.
+					casoDeTeste.setNegocio(negocio);
 				}
 			}
 			countLinha ++;
 		}
 		return listaCasosDeTeste;
-	}
-	
-	/**
-	 * Leitor das células do excel, recebe uma coluna de início e uma coluna de parada.
-	 * @param row - Row.
-	 * @param colunaInicio - int.
-	 * @param colunaFim - int.
-	 */
-	@SuppressWarnings("unused")
-	private static void readerCells(Row row, int colunaInicio, int colunaFim){
-		Cell cell;
-		
-		@SuppressWarnings("rawtypes")
-		Iterator iterator = row.cellIterator();
-		
-		int countColuna = 0;
-		
-		while((iterator.hasNext() && countColuna == 0) || (iterator.hasNext() && countColuna <= (colunaFim-1))){
-			cell = (Cell) iterator.next();
-			
-			if(countColuna >= (colunaInicio-1) && countColuna <= (colunaFim-1)){
-				
-				switch(cell.getCellType()){
-					case Cell.CELL_TYPE_STRING:
-						System.out.print(cell.getStringCellValue());
-						break;
-					case Cell.CELL_TYPE_BOOLEAN:
-						System.out.print(cell.getBooleanCellValue());
-						break;
-					case Cell.CELL_TYPE_NUMERIC:
-						System.out.print(cell.getNumericCellValue());
-						break;
-				}
-				System.out.print(";");
-			}
-			countColuna ++;
-		}
-		System.out.println();
 	}
 	
 	/**
@@ -154,6 +126,9 @@ public class ExcelReader {
 	private static boolean readerCellsDelimited(CasoDeTeste casoDeTeste, Row row, int colunaInicio, int colunaFim){
 		//Variável que irá controlar se o caso de teste chegou ao fim.
 		boolean finalCasoDeTeste = false;
+		
+		//Adicionado para pegar a coluna D7 onde contém o negócio relacionado a RTF
+		
 		
 		for(int i = colunaInicio - 1; i < colunaFim; i++){
 			if(row.getCell(i) != null){
@@ -225,5 +200,63 @@ public class ExcelReader {
 		}else{
 			return false;
 		}
+	}
+	
+	/**
+	 * Percorre o excel para pegar o conteúdo de uma única célula em uma única coluna.
+	 * @param workbook - Workbook
+	 * @param linha - Int
+	 * @param coluna -Int
+	 * @return String - Contendo dado.
+	 */
+	private static String readerRow(Workbook workbook, Sheet sheet, int linha, int coluna){
+		String negocio = null;
+		Sheet firstSheet = sheet;
+		
+		Row row;
+		
+		@SuppressWarnings("rawtypes")
+		Iterator iterator = firstSheet.rowIterator();
+		
+		int countLinha = 0;
+		
+		//Percorre as linhas informadas.
+		while((iterator.hasNext() && countLinha <= (linha-1) )){
+			row = (Row) iterator.next();
+			
+			if(countLinha == (linha-1)){
+				negocio = readerCell(row, coluna);
+			}
+			countLinha ++;
+		}
+		return negocio;
+	}
+	
+	/**
+	 * Leitor de uma célula do Excel.
+	 * @param row - Row.
+	 * @param colunaInicio - int.
+	 * @return String - contendo dado da célula.
+	 */
+	private static String readerCell(Row row, int coluna){
+		String dado = null;
+		
+		coluna = coluna - 1;
+			
+		if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_STRING){
+			
+			//Se o elemento que está sendo puxado do excel não for vazio ele guardará na String.
+			if(!row.getCell(coluna).getStringCellValue().equals("")){
+				dado =  row.getCell(coluna).getStringCellValue();
+			}
+			
+		}else if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_NUMERIC){
+			
+			//Se o elemento que está sendo puxado do excel não for vazio ele guardará na String.
+			if(!String.valueOf(row.getCell(coluna).getNumericCellValue()).equals("")){
+				dado = String.valueOf(row.getCell(coluna).getNumericCellValue());
+			}
+		}
+		return dado;
 	}
 }

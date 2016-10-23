@@ -113,11 +113,12 @@ public class WordIterator {
 	 * @param dado - String a ser inserida.
 	 * @throws IOException
 	 */
-	public static void inserirDadoTabela(String caminhoDoc, CustomXWPFDocument documento, int numeroTabela, int numeroLinha, int numeroColuna, String dado) throws IOException{
+	public static void inserirDadoTabela(String caminhoDoc, CustomXWPFDocument documento, int numeroTabela, int numeroLinha, int numeroColuna, String dado, boolean negrito) throws IOException{
 		XWPFTable table = documento.getTableArray(numeroTabela);
 		
 		XWPFRun casoDeTeste = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
-		casoDeTeste.setBold(false);
+		casoDeTeste.getText(0);
+		casoDeTeste.setBold(negrito);
 		casoDeTeste.setFontSize(10);
 		casoDeTeste.setFontFamily("Verdana");
 		casoDeTeste.setColor("000000");

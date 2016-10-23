@@ -5,13 +5,14 @@ import java.util.Map;
 
 public class CasoDeTeste {
 	
+	private String negocio;
 	private String siglaCasoDeTeste;
 	private String idCasoDeTeste;
 	private String itemDeReferencia;
 	private String cenarioDeTeste;
 	private String casoDeTesteCondicao;
 	private String regressaoObrigatoria;
-	private String preCondicoes;
+	private Map<Integer, String> preCondicoes;
 	private Map<Integer, String> procedimentosDeExecucao;
 	private Map<Integer, String> resultadoEsperado;
 	private String ondeComoValidarResultado;
@@ -20,10 +21,17 @@ public class CasoDeTeste {
 	
 	public CasoDeTeste() {
 		super();
+		preCondicoes = new HashMap<Integer, String>();
 		procedimentosDeExecucao = new HashMap<Integer, String>();
 		resultadoEsperado = new HashMap<Integer, String>();
 	}
 	
+	public String getNegocio() {
+		return negocio;
+	}
+	public void setNegocio(String negocio) {
+		this.negocio = negocio;
+	}
 	public String getSiglaCasoDeTeste() {
 		return siglaCasoDeTeste;
 	}
@@ -60,10 +68,10 @@ public class CasoDeTeste {
 	public void setRegressaoObrigatoria(String regressaoObrigatoria) {
 		this.regressaoObrigatoria = regressaoObrigatoria;
 	}
-	public String getPreCondicoes() {
+	public Map<Integer, String> getPreCondicoes() {
 		return preCondicoes;
 	}
-	public void setPreCondicoes(String preCondicoes) {
+	public void setPreCondicoes(Map<Integer, String> preCondicoes) {
 		this.preCondicoes = preCondicoes;
 	}
 	public Map<Integer, String> getProcedimentosDeExecucao() {

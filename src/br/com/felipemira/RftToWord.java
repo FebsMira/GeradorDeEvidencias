@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 import br.com.felipemira.arquivos.office.WordAutomacao;
 import br.com.felipemira.arquivos.office.reader.ExcelReader;
 import br.com.felipemira.objects.object.CasoDeTeste;
@@ -43,6 +41,7 @@ public class RftToWord {
 			
 			System.out.println("\nCenário Caso de teste: " + casoDeTeste.getCenarioDeTeste() + "\n");
 			
+			Map<Integer, String> preCondicoes = casoDeTeste.getPreCondicoes();
 			Map<Integer, String> procedimentosDeExecucao = casoDeTeste.getProcedimentosDeExecucao();
 			Map<Integer, String> resultadosEsperados = casoDeTeste.getResultadoEsperado();
 			
@@ -52,9 +51,21 @@ public class RftToWord {
 			System.out.println("Procedimentos: \n");
 			while(iteratorProcedimentos.hasNext()){
 				int numeroIterator = (int) iteratorProcedimentos.next();
-				word.inserirDadoTabela(numeroIterator, 0, 1, "Passo " + numeroIterator);
-				word.inserirDadoTabela(numeroIterator, 1, 1, (String) procedimentosDeExecucao.get(numeroIterator));
-				word.inserirDadoTabela(numeroIterator, 2, 1, (String) resultadosEsperados.get(numeroIterator));
+				
+				//Insere número do passo.
+				word.inserirDadoTabela(numeroIterator, 0, 0, numeroIterator + ":", true);
+				
+				//Procedimentos para execução do passo.
+				word.inserirDadoTabela(numeroIterator, 0, 1, (String) procedimentosDeExecucao.get(numeroIterator), false);
+				
+				//Pré Condições
+				word.inserirDadoTabela(numeroIterator, 1, 1, "Pré-Condições: ", true);
+				word.inserirDadoTabela(numeroIterator, 1, 1, (preCondicoes.get(numeroIterator) == null)? " " : (String) preCondicoes.get(numeroIterator), false);
+				
+				//Resultado esperado do passo.
+				word.inserirDadoTabela(numeroIterator, 2, 1, (String) resultadosEsperados.get(numeroIterator), false);
+				
+				//Apenas para fins de teste.
 				String procedimento = (String) procedimentosDeExecucao.get(numeroIterator);
 				System.out.println(procedimento);
 			}
