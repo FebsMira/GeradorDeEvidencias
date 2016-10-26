@@ -8,10 +8,11 @@ import java.util.Map;
 import br.com.felipemira.arquivos.office.WordAutomacao;
 import br.com.felipemira.arquivos.office.reader.ExcelReader;
 import br.com.felipemira.objects.object.CasoDeTeste;
+import br.com.felipemira.objects.object.Error;
 
 public class RftToWord {
 
-	public static void executar(String caminhoSalvar, String caminhoModelo, String caminhoExcel, int linhaInicio, int linhaFim) throws InterruptedException, IOException {
+	public static void executar(String caminhoSalvar, String caminhoModelo, String caminhoExcel, int linhaInicio, int linhaFim) {
 		
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
 		
@@ -21,7 +22,11 @@ public class RftToWord {
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 21);
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 57);
 		//listaCasosDeTeste = leitorRTF.readerDelimited(12, 1325);
-		listaCasosDeTeste = leitorRTF.readerDelimited(linhaInicio, linhaFim);
+		try {
+			listaCasosDeTeste = leitorRTF.readerDelimited(linhaInicio, linhaFim);
+		} catch (IOException e) {
+			Error.error = e.getMessage().toString();
+		}
 		
 		@SuppressWarnings("rawtypes")
 		Iterator iterator = listaCasosDeTeste.keySet().iterator();

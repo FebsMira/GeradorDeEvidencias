@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,6 +19,9 @@ import br.com.felipemira.objects.iterator.CasoDeTesteIterator;
 import br.com.felipemira.objects.object.CasoDeTeste;
 
 public class ExcelReader {
+	
+	//Apenas para verificar se existe formulas no excel;
+	private static Workbook workbook;
 	
 	private static String caminhoExcel;
 	
@@ -34,6 +39,7 @@ public class ExcelReader {
 	 * @param linhaFim - int.
 	 * @throws IOException
 	 */
+	
 	public Map<Integer, CasoDeTeste> readerDelimited(int linhaInicio, int linhaFim) throws IOException{
 		//instância um Map que retornará para a classe que chamou o método os casos de teste que o Excel contém, nas linhas delimitadas.
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
@@ -43,6 +49,10 @@ public class ExcelReader {
 		
 		//O Workbook do POI recebe o excel.
 		Workbook workbook = new XSSFWorkbook(inputStream);
+		
+		//Mando a instancia de workbook para ExcelReader.workbook, será usada para verificar formulas.
+		ExcelReader.workbook = workbook;
+		
 		//Aba do excel a ser selecionada.
 		Sheet sheet = workbook.getSheetAt(0);
 		
@@ -146,7 +156,31 @@ public class ExcelReader {
 					if(!String.valueOf(row.getCell(i).getNumericCellValue()).equals("")){
 						CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(row.getCell(i).getNumericCellValue()));
 					}
-				
+					
+				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA){
+					if(!String.valueOf(row.getCell(i).getCellFormula()).equals("")){
+						//Verifico as formulas.
+						FormulaEvaluator evaluator = ExcelReader.workbook.getCreationHelper().createFormulaEvaluator();
+						CellValue cellValue = evaluator.evaluate(row.getCell(i));
+						
+						switch (cellValue.getCellType()) {
+							case Cell.CELL_TYPE_BOOLEAN:
+								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getBooleanValue()));
+							    break;
+							case Cell.CELL_TYPE_NUMERIC:
+								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getNumberValue()));
+							    break;
+							case Cell.CELL_TYPE_STRING:
+								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getStringValue()));
+							    break;
+							case Cell.CELL_TYPE_BLANK:
+							case Cell.CELL_TYPE_ERROR:
+							// CELL_TYPE_FORMULA will never happen
+							case Cell.CELL_TYPE_FORMULA: 
+							    break;
+						}
+					}
+					
 				//Se o elemento for em branco irá verificar os índices 8 e 9.
 				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_BLANK){
 					switch(i){
@@ -255,6 +289,29 @@ public class ExcelReader {
 			//Se o elemento que está sendo puxado do excel não for vazio ele guardará na String.
 			if(!String.valueOf(row.getCell(coluna).getNumericCellValue()).equals("")){
 				dado = String.valueOf(row.getCell(coluna).getNumericCellValue());
+			}
+		}else if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_FORMULA){
+			if(!String.valueOf(row.getCell(coluna).getCellFormula()).equals("")){
+				//Verifico as formulas.
+				FormulaEvaluator evaluator = ExcelReader.workbook.getCreationHelper().createFormulaEvaluator();
+				CellValue cellValue = evaluator.evaluate(row.getCell(coluna));
+				
+				switch (cellValue.getCellType()) {
+					case Cell.CELL_TYPE_BOOLEAN:
+						dado = String.valueOf(cellValue.getBooleanValue());
+					    break;
+					case Cell.CELL_TYPE_NUMERIC:
+						dado = String.valueOf(cellValue.getNumberValue());
+					    break;
+					case Cell.CELL_TYPE_STRING:
+						dado = String.valueOf(cellValue.getStringValue());
+					    break;
+					case Cell.CELL_TYPE_BLANK:
+					case Cell.CELL_TYPE_ERROR:
+					// CELL_TYPE_FORMULA will never happen
+					case Cell.CELL_TYPE_FORMULA: 
+					    break;
+				}
 			}
 		}
 		return dado;

@@ -1,7 +1,9 @@
 package br.com.felipemira.view;
 
 import java.io.File;
+import java.io.IOException;
 
+import br.com.felipemira.objects.object.Error;
 import br.com.felipemira.RftToWord;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -36,13 +38,14 @@ public class GeradorDeEvidencias extends Application{
 	private Image applicationIcon;
 	
 	private AnchorPane pane;
-	private Label labelModel, labelSalvar, labelArquivoRTF, labelLinhaInicio, labelLinhaFim, labelBy;
+	private Label labelModel, labelSalvar, labelArquivoRTF, labelLinhaInicio, labelLinhaFim;// labelBy;
 	private TextField txModel, txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal;
 	private Button btnExecutar;
 	private ProgressBar progressBar;
 	private ImageView imagem;
 	
 	private String localIconeAplicativo = "br/com/felipemira/img/Inmetrics.png";
+	
 	
 	private static Stage stage;
 	
@@ -52,8 +55,8 @@ public class GeradorDeEvidencias extends Application{
         protected Task createTask() {
             return new Task() {
             	@Override
-                protected Void call() throws Exception {
-            		RftToWord.executar(txSalvar.getText(), txModel.getText(), txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
+                protected Void call() throws NumberFormatException, InterruptedException, IOException {
+            			RftToWord.executar(txSalvar.getText(), txModel.getText(), txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
             		return null;
             	}
         	};
@@ -71,7 +74,7 @@ public class GeradorDeEvidencias extends Application{
             if(newState == Worker.State.FAILED){
             	progressBar.progressProperty().unbind();
             	progressBar.setProgress(new Float(0f));
-            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada com erros. \nReveja a RTF!");
+            	alertError("Erro!", Error.error);
             }
         }
 	};
@@ -147,12 +150,12 @@ public class GeradorDeEvidencias extends Application{
 		imagem = new ImageView();
 		imagem.setImage(new Image("br/com/felipemira/img/Inmetrics2.jpg"));
 		
-		labelBy = new Label("By Felipe Mira");
+		//labelBy = new Label("By Felipe Mira");
 		
 		progressBar = new ProgressBar();
 		progressBar.setProgress(new Float(0f));
 		
-		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, labelBy);
+		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem);//, labelBy);
 		scene = new Scene(pane);
 	}
 	
@@ -198,10 +201,12 @@ public class GeradorDeEvidencias extends Application{
 		progressBar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
 		progressBar.setLayoutY(280);
 		
-		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
-		labelBy.setScaleY(0.5);
-		labelBy.setScaleX(0.5);
-		labelBy.setLayoutY(280);
+		/*
+			labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
+			labelBy.setScaleY(0.5);
+			labelBy.setScaleX(0.5);
+			labelBy.setLayoutY(280);
+		*/
 	}
 	
 	private void initListeners(){
@@ -330,6 +335,23 @@ public class GeradorDeEvidencias extends Application{
 	
 	private void alert(String title, String text){
 		Alert alert = new Alert(AlertType.INFORMATION);
+		
+		alert.setTitle(title);
+    	alert.setHeaderText(text);
+    	alert.setContentText(stage.getTitle().toString());
+    	
+		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(localIconeAplicativo));
+    	
+    	alert.showAndWait().ifPresent(rs -> {
+    	    if (rs == ButtonType.OK) {
+    	        System.out.println("Pressed OK.");
+    	    }
+    	});
+	}
+	
+	private void alertError(String title, String text){
+		Alert alert = new Alert(AlertType.ERROR);
 		
 		alert.setTitle(title);
     	alert.setHeaderText(text);

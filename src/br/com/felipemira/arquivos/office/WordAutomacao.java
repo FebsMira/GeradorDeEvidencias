@@ -16,6 +16,7 @@ import br.com.felipemira.arquivos.office.iterator.WordIterator;
 import br.com.felipemira.convert.ConvertToPDF;
 import br.com.felipemira.copy.Copy;
 import br.com.felipemira.objects.object.CasoDeTeste;
+import br.com.felipemira.objects.object.Error;
 
 public class WordAutomacao {
 	
@@ -54,7 +55,7 @@ public class WordAutomacao {
 	 * Pega o templete da evidência e cria um novo documento word.
 	 * @throws IOException
 	 */
-	private void criarDocumento(CasoDeTeste casoDeTeste) throws IOException{
+	private void criarDocumento(CasoDeTeste casoDeTeste){
 		//Pega a hora que foi criado o documento.
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Calendar cal = Calendar.getInstance();
@@ -66,7 +67,10 @@ public class WordAutomacao {
         this.nomeComHora = nomeArquivo + "_" + date;
         
         //Defino para toda a classe o caminho da minha evidencia
-        this.caminhoDoc = this.caminhoDoc + this.nomeComHora + ".docx";
+        //this.caminhoDoc = this.caminhoDoc + this.nomeComHora + ".docx";
+        
+        //Atualizacao para não ser colocado o dia e hora no nome do caso de teste.
+        this.caminhoDoc = this.caminhoDoc + nomeArquivo + ".docx";
         
         this.caminhoDoc = this.caminhoDoc.replaceAll("/", "_");
 		CustomXWPFDocument document = null;
@@ -77,32 +81,49 @@ public class WordAutomacao {
         //Faco uma copia do template renomeada com o nome da minha evidencia
         if(file.exists()) {
         	File copiaFile = new File(caminhoDoc);
-        	Copy.copyFile(file, copiaFile);
-        	InputStream arquivo = new FileInputStream(caminhoDoc);
-			CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
-	        document = copiaDocumento;
-	        this.document = document;
+        	//Se o arquivo já existir irá deletar o mesmo.
+        	if(copiaFile.exists()){
+        		copiaFile.delete();
+        	}
+        	try{
+        		Copy.copyFile(file, copiaFile);
+            	InputStream arquivo = new FileInputStream(caminhoDoc);
+    			CustomXWPFDocument copiaDocumento = new CustomXWPFDocument(arquivo);
+    	        document = copiaDocumento;
+    	        this.document = document;
+        	}catch(Exception ex){
+        		Error.error = ex.getMessage().toString();
+        	}
+        	
         }else{
+        	Error.error = "Template não consta na pasta informada!";
         	System.out.println("Template não consta na pasta informada!");
         }
         
-        //Insere o nome do CT na tabela um, primeira linha da primeira coluna.
-        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
-        //Insere a hora de execução na tabela um, primeira linha da segunda coluna.
-        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
+        try{
+        	//Insere o nome do CT na tabela um, primeira linha da primeira coluna.
+            //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
+            //Insere a hora de execução na tabela um, primeira linha da segunda coluna.
+            //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
+            
+            //Insere o título no documento word.
+            //WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
+            
+            WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, "Projeto - " + casoDeTeste.getNegocio(), true);
+            //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 3, this.horaExecucao.substring(0, 10), false);
+            
+            //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste(), false);
+            WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getCasoDeTesteCondicao(), false);
+            
+            //Objetivo
+            WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste(), false);
+            //Resultado Esperado
+            WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCenarioDeTeste(), false);
+            //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, (casoDeTeste.getNomeDoTestador() == null)? " - " : casoDeTeste.getNomeDoTestador(), false);
+        }catch(Exception ex){
+        	Error.error = ex.getMessage().toString();
+        }
         
-        //Insere o título no documento word.
-        //WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
-        
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, "Projeto - " + casoDeTeste.getNegocio(), true);
-        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 1, 3, this.horaExecucao.substring(0, 10), false);
-        
-        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste(), false);
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 2, 1, casoDeTeste.getIdCasoDeTeste(), false);
-        
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 3, 1, casoDeTeste.getCenarioDeTeste(), false);
-        WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 4, 1, casoDeTeste.getCasoDeTesteCondicao(), false);
-        //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 6, 1, (casoDeTeste.getNomeDoTestador() == null)? " - " : casoDeTeste.getNomeDoTestador(), false);
 	}
 	
 	
@@ -121,15 +142,8 @@ public class WordAutomacao {
 		}
 		try {
 			gerarEvidencia(mensagem, imagem);
-		} catch (InvalidFormatException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		} catch (AWTException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			Error.error = e.getMessage().toString();
 		}
 	}
 	
@@ -141,13 +155,18 @@ public class WordAutomacao {
 	 * @throws AWTException
 	 * @throws InvalidFormatException
 	 */
-	private void gerarEvidencia(String mensagem, Boolean geraImagem) throws IOException, AWTException, InvalidFormatException{
-	    if(geraImagem){
-	    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
-	    	WordIterator.inserirImagem(this.caminhoDoc, this.document, this.caminhoImagem);
-	    }else{
-	    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
-	    }
+	private void gerarEvidencia(String mensagem, Boolean geraImagem){
+		try{
+			if(geraImagem){
+		    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
+		    	WordIterator.inserirImagem(this.caminhoDoc, this.document, this.caminhoImagem);
+		    }else{
+		    	WordIterator.inserirTexto(this.caminhoDoc, this.document, mensagem);
+		    }
+		}catch(Exception ex){
+			Error.error = ex.getMessage().toString();
+		}
+	    
 	}
 	
 	/**
@@ -191,19 +210,23 @@ public class WordAutomacao {
 	 * Finaliza a evidência e cria o arquivo PDF
 	 * @throws IOException
 	 */
-	public void finalizarEvidencia() throws IOException{
-	    
-	    //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
-	    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao(), false);
-	    
-	    //Insere o Status do caso de teste na tabela.
-	    if(this.countFalhou == 1){
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Falhou", false);
-	    }else{
-	    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Passou", false);
+	public void finalizarEvidencia(){
+	    try{
+	    	 //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
+		    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao(), false);
+		    
+		    //Insere o Status do caso de teste na tabela.
+		    if(this.countFalhou == 1){
+		    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Falhou", false);
+		    }else{
+		    	WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 0, "Passou", false);
+		    }
+		    
+		    ConvertToPDF.convert(this.caminhoDoc, this.nomeComHora);
 	    }
-	    
-	    ConvertToPDF.convert(this.caminhoDoc, this.nomeComHora);
+	    catch(Exception ex){
+	    	Error.error = ex.getMessage().toString();
+	    }
 	}
 	
 	/**
@@ -221,7 +244,7 @@ public class WordAutomacao {
 		try {
 			WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, numeroTabela, numeroLinha, numeroColuna, dado, negrito);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Error.error = e.getMessage().toString();
 		}
 	}
 }
