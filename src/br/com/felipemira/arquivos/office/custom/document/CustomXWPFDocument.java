@@ -1,14 +1,14 @@
 package br.com.felipemira.arquivos.office.custom.document;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlToken;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 public class CustomXWPFDocument extends XWPFDocument
 {

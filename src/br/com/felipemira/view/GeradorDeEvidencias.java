@@ -3,8 +3,8 @@ package br.com.felipemira.view;
 import java.io.File;
 import java.io.IOException;
 
-import br.com.felipemira.objects.object.Error;
 import br.com.felipemira.RftToWord;
+import br.com.felipemira.objects.object.Error;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,8 +38,8 @@ public class GeradorDeEvidencias extends Application{
 	private Image applicationIcon;
 	
 	private AnchorPane pane;
-	private Label labelModel, labelSalvar, labelArquivoRTF, labelLinhaInicio, labelLinhaFim;// labelBy;
-	private TextField txModel, txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal;
+	private Label labelSalvar, labelArquivoRTF, labelLinhaInicio, labelLinhaFim, labelBy; //labelModel
+	private TextField txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal; //txModel
 	private Button btnExecutar;
 	private ProgressBar progressBar;
 	private ImageView imagem;
@@ -56,7 +56,7 @@ public class GeradorDeEvidencias extends Application{
             return new Task() {
             	@Override
                 protected Void call() throws NumberFormatException, InterruptedException, IOException {
-            			RftToWord.executar(txSalvar.getText(), txModel.getText(), txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
+            			RftToWord.executar(txSalvar.getText(), "templates"/*txModel.getText()*/, txArquivoRTF.getText(), Integer.valueOf(txLinhaInicio.getText()), Integer.valueOf(txLinhaFinal.getText()));
             		return null;
             	}
         	};
@@ -69,7 +69,7 @@ public class GeradorDeEvidencias extends Application{
             if (newState == Worker.State.SUCCEEDED) {
             	progressBar.progressProperty().unbind();
             	progressBar.setProgress(new Float(0f));
-            	alert("Finalizado!", "Criação de documentos referentes a RTF finalizada!");
+            	alert("Finalizado!", "CriaÃ§Ã£o de documentos referentes a RTF finalizada!");
             }
             if(newState == Worker.State.FAILED){
             	progressBar.progressProperty().unbind();
@@ -85,7 +85,7 @@ public class GeradorDeEvidencias extends Application{
 		initListeners();
 		
 		stage.setScene(scene);
-		stage.setTitle("Gerador de Evidências");
+		stage.setTitle("Gerador de EvidÃªncias");
 		stage.resizableProperty().set(false);
 		applicationIcon = new Image(localIconeAplicativo);
 		stage.getIcons().add(applicationIcon);
@@ -109,9 +109,9 @@ public class GeradorDeEvidencias extends Application{
 		pane.setStyle("-fx-background-color:linear-gradient(from 200% 0% to 100% 100%, white 0%, #FFD401 100%)");
 		
 		
-		labelModel = new Label("Local do Modelo.docx:");
+		/*labelModel = new Label("Local do Modelo.docx:");
 		txModel = new TextField();
-		txModel.setPromptText("Local do Modelo.docx.");
+		txModel.setPromptText("Local do Modelo.docx.");*/
 		
 		labelSalvar = new Label("Salvar em:");
 		txSalvar = new TextField();
@@ -121,7 +121,7 @@ public class GeradorDeEvidencias extends Application{
 		txArquivoRTF = new TextField();
 		txArquivoRTF.setPromptText("Arquivo RTF...");
 		
-		labelLinhaInicio = new Label("Linha Início:");
+		labelLinhaInicio = new Label("Linha InÃ­cio:");
 		txLinhaInicio = new TextField();
 		txLinhaInicio.setPromptText(">=12");
 		txLinhaInicio.textProperty().addListener(new ChangeListener<String>() {
@@ -150,21 +150,22 @@ public class GeradorDeEvidencias extends Application{
 		imagem = new ImageView();
 		imagem.setImage(new Image("br/com/felipemira/img/Inmetrics2.jpg"));
 		
-		//labelBy = new Label("By Felipe Mira");
+		labelBy = new Label("Criado por Felipe Mira");
 		
 		progressBar = new ProgressBar();
 		progressBar.setProgress(new Float(0f));
 		
-		pane.getChildren().addAll(labelModel, txModel, labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem);//, labelBy);
+		pane.getChildren().addAll(labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, labelBy);//, labelBy, labelModel, txModel);
 		scene = new Scene(pane);
 	}
 	
 	private void initLayout(){
+		/*
 		labelModel.setLayoutX(((pane.getWidth() - labelModel.getWidth()) / 2) - 300);
 		labelModel.setLayoutY(20);
 		txModel.setLayoutX(((pane.getWidth() - txModel.getWidth()) / 2) - 100);
 		txModel.setPrefWidth(500);
-		txModel.setLayoutY(20);
+		txModel.setLayoutY(20);*/
 		
 		labelSalvar.setLayoutX(((pane.getWidth() - labelSalvar.getWidth()) / 2) - 332);
 		labelSalvar.setLayoutY(60);
@@ -201,15 +202,16 @@ public class GeradorDeEvidencias extends Application{
 		progressBar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
 		progressBar.setLayoutY(280);
 		
-		/*
-			labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
-			labelBy.setScaleY(0.5);
-			labelBy.setScaleX(0.5);
-			labelBy.setLayoutY(280);
-		*/
+		
+		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
+		labelBy.setScaleY(0.5);
+		labelBy.setScaleX(0.5);
+		labelBy.setLayoutY(280);
+		
 	}
 	
 	private void initListeners(){
+		/*
 		txModel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override
 		    public void handle(MouseEvent mouseEvent) {
@@ -220,7 +222,7 @@ public class GeradorDeEvidencias extends Application{
 		            }
 		        }
 		    }
-		});
+		});*/
 		
 		txSalvar.setOnMouseClicked(new EventHandler<MouseEvent>() {
 		    @Override
@@ -250,10 +252,10 @@ public class GeradorDeEvidencias extends Application{
 		    @Override public void handle(ActionEvent e) {
 		    	Boolean erro = false;
 		    	String mensagem = "Preencha o(s) seguinte(s) campo(s):\n";
-		    	if(txModel.getText().equals("")){
+		    	/*if(txModel.getText().equals("")){
 		    		mensagem = mensagem + "- Local do Modelo.docx\n";
 		    		erro = true;
-		    	}
+		    	}*/
 		    	if(txSalvar.getText().equals("")){
 		    		mensagem = mensagem + "- Salvar em:\n";
 		    		erro = true;
@@ -263,7 +265,7 @@ public class GeradorDeEvidencias extends Application{
 		    		erro = true;
 		    	}
 		    	if(txLinhaInicio.getText().equals("")){
-		    		mensagem = mensagem + "- Linha Início:\n";
+		    		mensagem = mensagem + "- Linha InÃ­cio:\n";
 		    		erro = true;
 		    	}
 		    	if(txLinhaFinal.getText().equals("")){
@@ -271,19 +273,19 @@ public class GeradorDeEvidencias extends Application{
 		    		erro = true;
 		    	}
 		    	if(erro){
-		    		alert("Atenção!", mensagem);
+		    		alert("AtenÃ§Ã£o!", mensagem);
 		    	}else{
 		    		String mensagem2 = "Verificar valor(es):\n";
-		    		if(Integer.valueOf(txLinhaInicio.getText()) < 12){
-		    			mensagem2 = mensagem2 + "- Linha Início Menor que 12.\n";
+		    		if(Integer.valueOf(Integer.parseInt(txLinhaInicio.getText())) < 12){
+		    			mensagem2 = mensagem2 + "- Linha InÃ­cio Menor que 12.\n";
 			    		erro = true;
 		    		}
-		    		if(Integer.valueOf(txLinhaFinal.getText()) < 12){
+		    		if(Integer.valueOf(Integer.parseInt(txLinhaFinal.getText())) < 12){
 		    			mensagem2 = mensagem2 + "- Linha Fim Menor que 12.\n";
 			    		erro = true;
 		    		}
 		    		if(erro){
-		    			alert("Atenção!", mensagem);
+		    			alert("AtenÃ§Ã£o!", mensagem);
 		    		}else{
 		    			try {
 			    			progressBar.progressProperty().bind(servico.progressProperty());

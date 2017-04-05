@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.felipemira.objects.iterator.CasoDeTesteIterator;
 import br.com.felipemira.objects.object.CasoDeTeste;
+import br.com.felipemira.objects.object.Error;
 
 public class ExcelReader {
 	
@@ -26,7 +27,7 @@ public class ExcelReader {
 	private static String caminhoExcel;
 	
 	/**
-	 * Recebe uma planilha excel, que será preparada para a leitura.
+	 * Recebe uma planilha excel, que sera preparada para a leitura.
 	 * @param caminhoExcel - String.
 	 */
 	public ExcelReader(String caminhoExcel){
@@ -34,39 +35,45 @@ public class ExcelReader {
 	}
 	
 	/**
-	 * Lê o excel apartir dos parâmetros passados. Deve receber a linha de inicio e a linha final para leitura, assim como a coluna de início e a coluna final.
+	 * La o excel apartir dos parametros passados. Deve receber a linha de inicio e a linha final para leitura, assim como a coluna de inicio e a coluna final.
 	 * @param linhaInicio - int.
 	 * @param linhaFim - int.
 	 * @throws IOException
 	 */
 	
-	public Map<Integer, CasoDeTeste> readerDelimited(int linhaInicio, int linhaFim) throws IOException{
-		//instância um Map que retornará para a classe que chamou o método os casos de teste que o Excel contém, nas linhas delimitadas.
-		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
-		
-		//Leitor de arquivos recebe o excel informado.
-		FileInputStream inputStream = new FileInputStream(new File(caminhoExcel));
-		
-		//O Workbook do POI recebe o excel.
-		Workbook workbook = new XSSFWorkbook(inputStream);
-		
-		//Mando a instancia de workbook para ExcelReader.workbook, será usada para verificar formulas.
-		ExcelReader.workbook = workbook;
-		
-		//Aba do excel a ser selecionada.
-		Sheet sheet = workbook.getSheetAt(0);
-		
-		//A lista de casos de teste recebe o Map com todos os casos de teste lidos.
-		listaCasosDeTeste = readerRows(workbook, sheet, linhaInicio, linhaFim);
-		
-		workbook.close();
-		inputStream.close();
-		
-		return listaCasosDeTeste;
+	public Map<Integer, CasoDeTeste> readerDelimited(int linhaInicio, int linhaFim){
+		try{
+			
+			//instancia um Map que retornara para a classe que chamou o metodo os casos de teste que o Excel contem, nas linhas delimitadas.
+			Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
+			
+			//Leitor de arquivos recebe o excel informado.
+			FileInputStream inputStream = new FileInputStream(new File(caminhoExcel));
+			
+			//O Workbook do POI recebe o excel.
+			Workbook workbook = new XSSFWorkbook(inputStream);
+			
+			//Mando a instancia de workbook para ExcelReader.workbook, sera usada para verificar formulas.
+			ExcelReader.workbook = workbook;
+			
+			//Aba do excel a ser selecionada.
+			Sheet sheet = workbook.getSheetAt(0);
+			
+			//A lista de casos de teste recebe o Map com todos os casos de teste lidos.
+			listaCasosDeTeste = readerRows(workbook, sheet, linhaInicio, linhaFim);
+			
+			workbook.close();
+			inputStream.close();
+			
+			return listaCasosDeTeste;
+		}catch(Exception ex){
+			Error.error = ex.getMessage().toString();
+			return null;
+		}
 	}
 	
 	/**
-	 * Percorre o excel delimitado por linha e coluna, e chama o método readerCell passando as colunas que devem ser lidas.
+	 * Percorre o excel delimitado por linha e coluna, e chama o metodo readerCell passando as colunas que devem ser lidas.
 	 * @param workbook - Workbook.
 	 * @param sheet - Sheet.
 	 * @param linhaInicio - int.
@@ -87,18 +94,18 @@ public class ExcelReader {
 		
 		int countLinha = 0;
 		
-		//Instância de um objeto CasoDeTeste, para ser preenchida e adicionada a lista.
+		//Instancia de um objeto CasoDeTeste, para ser preenchida e adicionada a lista.
 		CasoDeTeste casoDeTeste = new CasoDeTeste();
-		//Recebe o negócio da célula D7 do excel.
+		//Recebe o negocio da celula D7 do excel.
 		String negocio = readerRow(workbook, firstSheet, 7, 4);
-		//Insere o negócio no caso de teste.
+		//Insere o negocio no caso de teste.
 		casoDeTeste.setNegocio(negocio);
 		
 		
-		//Contador responsável por contar a quantidade dos casos de testes e de atribuir a chave para o Map.
+		//Contador responsavel por contar a quantidade dos casos de testes e de atribuir a chave para o Map.
 		int countCasosDeTeste = 0;
 		
-		//Lista que receberá os casos de testes.
+		//Lista que recebera os casos de testes.
 		Map<Integer, CasoDeTeste> listaCasosDeTeste = new HashMap<Integer, CasoDeTeste>();
 		
 		//Percorre as linhas informadas.
@@ -108,15 +115,15 @@ public class ExcelReader {
 			if(countLinha >= (linhaInicio-1) && countLinha <= (linhaFim - 1)){
 				//readerCells(row, colunaInicio, colunaFim);
 				
-				//Lê cada uma das células da linha, se não encontrar nada na célula 8 ou 9 é sinalizado que acabou os passos do caso de teste.
+				//Le cada uma das celulas da linha, se nao encontrar nada na celula 8 ou 9 e sinalizado que acabou os passos do caso de teste.
 				if(readerCellsDelimited(casoDeTeste, row, colunaInicio, colunaFim) || row.getRowNum() == (linhaFim - 1)){
-					//Se o Caso de Teste chegou ao fim implementa o contador, que é o controle para adição de elementos no Map.
+					//Se o Caso de Teste chegou ao fim implementa o contador, que e o controle para adicao de elementos no Map.
 					countCasosDeTeste ++;
 					//Preenche o Map com o caso de teste, com a Key do contador.
 					listaCasosDeTeste.put(countCasosDeTeste, casoDeTeste);
-					//Cria uma nova instância para o objeto casoDeTeste.
+					//Cria uma nova instancia para o objeto casoDeTeste.
 					casoDeTeste = new CasoDeTeste();
-					//Insere o negócio no caso de teste.
+					//Insere o negocio no caso de teste.
 					casoDeTeste.setNegocio(negocio);
 				}
 			}
@@ -126,7 +133,7 @@ public class ExcelReader {
 	}
 	
 	/**
-	 * Lê e grava os parâmetros dentro do objeto caso de teste. Retorna true ao chegar no final do caso de teste.
+	 * Le e grava os parametros dentro do objeto caso de teste. Retorna true ao chegar no final do caso de teste.
 	 * @param casoDeTeste - CasoDeTeste.
 	 * @param row - Row.
 	 * @param colunaInicio int.
@@ -134,55 +141,59 @@ public class ExcelReader {
 	 * @return boolean - se acabou o caso de teste retorna true;
 	 */
 	private static boolean readerCellsDelimited(CasoDeTeste casoDeTeste, Row row, int colunaInicio, int colunaFim){
-		//Variável que irá controlar se o caso de teste chegou ao fim.
+		//Variï¿½vel que irï¿½ controlar se o caso de teste chegou ao fim.
 		boolean finalCasoDeTeste = false;
 		
-		//Adicionado para pegar a coluna D7 onde contém o negócio relacionado a RTF
+		//Adicionado para pegar a coluna D7 onde contï¿½m o negï¿½cio relacionado a RTF
 		
 		
 		for(int i = colunaInicio - 1; i < colunaFim; i++){
 			if(row.getCell(i) != null){
 				
-				if(row.getCell(i).getCellType() == Cell.CELL_TYPE_STRING){
+				
+				
+				if(row.getCell(i).getCellTypeEnum() == CellType.STRING){
 					
-					//Se o elemento que está sendo puxado do excel não for vazio ele adicionará o elemento ao caso de teste passado na chamada do método.
+					//Se o elemento que estï¿½ sendo puxado do excel nï¿½o for vazio ele adicionarï¿½ o elemento ao caso de teste passado na chamada do mï¿½todo.
 					if(!row.getCell(i).getStringCellValue().equals("")){
 						CasoDeTesteIterator.gravarDados(casoDeTeste, i, row.getCell(i).getStringCellValue());
 					}
 					
-				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_NUMERIC){
+				}else if(row.getCell(i).getCellTypeEnum() == CellType.NUMERIC){
 					
-					//Se o elemento que está sendo puxado do excel não for vazio ele adicionará o elemento ao caso de teste passado na chamada do método.
+					//Se o elemento que estï¿½ sendo puxado do excel nï¿½o for vazio ele adicionarï¿½ o elemento ao caso de teste passado na chamada do mï¿½todo.
 					if(!String.valueOf(row.getCell(i).getNumericCellValue()).equals("")){
 						CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(row.getCell(i).getNumericCellValue()));
 					}
 					
-				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA){
+				}else if(row.getCell(i).getCellTypeEnum() == CellType.FORMULA){
 					if(!String.valueOf(row.getCell(i).getCellFormula()).equals("")){
 						//Verifico as formulas.
 						FormulaEvaluator evaluator = ExcelReader.workbook.getCreationHelper().createFormulaEvaluator();
 						CellValue cellValue = evaluator.evaluate(row.getCell(i));
 						
-						switch (cellValue.getCellType()) {
-							case Cell.CELL_TYPE_BOOLEAN:
+						switch (cellValue.getCellTypeEnum()) {
+							case BOOLEAN:
 								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getBooleanValue()));
 							    break;
-							case Cell.CELL_TYPE_NUMERIC:
+							case NUMERIC:
 								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getNumberValue()));
 							    break;
-							case Cell.CELL_TYPE_STRING:
+							case STRING:
 								CasoDeTesteIterator.gravarDados(casoDeTeste, i, String.valueOf(cellValue.getStringValue()));
 							    break;
-							case Cell.CELL_TYPE_BLANK:
-							case Cell.CELL_TYPE_ERROR:
+							case BLANK:
+							case ERROR:
 							// CELL_TYPE_FORMULA will never happen
-							case Cell.CELL_TYPE_FORMULA: 
+							case FORMULA: 
 							    break;
+							default:
+								break;
 						}
 					}
 					
-				//Se o elemento for em branco irá verificar os índices 8 e 9.
-				}else if(row.getCell(i).getCellType() == Cell.CELL_TYPE_BLANK){
+				//Se o elemento for em branco irï¿½ verificar os ï¿½ndices 8 e 9.
+				}else if(row.getCell(i).getCellTypeEnum() == CellType.BLANK){
 					switch(i){
 						case 1:
 						case 2:
@@ -192,7 +203,7 @@ public class ExcelReader {
 						case 6:
 						case 7:
 							break;
-						//Se for a célula com índice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a função que chamou que o Caso de Teste chegou ao fim.
+						//Se for a cï¿½lula com ï¿½ndice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a funï¿½ï¿½o que chamou que o Caso de Teste chegou ao fim.
 						case 8:
 						case 9:
 							finalCasoDeTeste = true;
@@ -204,7 +215,7 @@ public class ExcelReader {
 					}	
 				}
 				
-			//Para efeito de células null, o leitor passará sobre elas sem nenhum problema.
+			//Para efeito de cï¿½lulas null, o leitor passarï¿½ sobre elas sem nenhum problema.
 			}else{
 				switch(i){
 					case 1:
@@ -215,7 +226,7 @@ public class ExcelReader {
 					case 6:
 					case 7:
 						break;
-					//Se for a célula com índice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a função que chamou que o Caso de Teste chegou ao fim.
+					//Se for a cï¿½lula com ï¿½ndice 8 ou 9, que sinalizam os passos e resultados do caso de teste, sinaliza para a funï¿½ï¿½o que chamou que o Caso de Teste chegou ao fim.
 					case 8:
 					case 9:
 						finalCasoDeTeste = true;
@@ -237,7 +248,7 @@ public class ExcelReader {
 	}
 	
 	/**
-	 * Percorre o excel para pegar o conteúdo de uma única célula em uma única coluna.
+	 * Percorre o excel para pegar o conteudo de uma inica celula em uma inica coluna.
 	 * @param workbook - Workbook
 	 * @param linha - Int
 	 * @param coluna -Int
@@ -267,50 +278,52 @@ public class ExcelReader {
 	}
 	
 	/**
-	 * Leitor de uma célula do Excel.
+	 * Leitor de uma celula do Excel.
 	 * @param row - Row.
 	 * @param colunaInicio - int.
-	 * @return String - contendo dado da célula.
+	 * @return String - contendo dado da celula.
 	 */
 	private static String readerCell(Row row, int coluna){
 		String dado = null;
 		
 		coluna = coluna - 1;
 			
-		if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_STRING){
+		if(row.getCell(coluna).getCellTypeEnum() == CellType.STRING){
 			
-			//Se o elemento que está sendo puxado do excel não for vazio ele guardará na String.
+			//Se o elemento que estï¿½ sendo puxado do excel nï¿½o for vazio ele guardarï¿½ na String.
 			if(!row.getCell(coluna).getStringCellValue().equals("")){
 				dado =  row.getCell(coluna).getStringCellValue();
 			}
 			
-		}else if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_NUMERIC){
+		}else if(row.getCell(coluna).getCellTypeEnum() == CellType.NUMERIC){
 			
-			//Se o elemento que está sendo puxado do excel não for vazio ele guardará na String.
+			//Se o elemento que estï¿½ sendo puxado do excel nï¿½o for vazio ele guardarï¿½ na String.
 			if(!String.valueOf(row.getCell(coluna).getNumericCellValue()).equals("")){
 				dado = String.valueOf(row.getCell(coluna).getNumericCellValue());
 			}
-		}else if(row.getCell(coluna).getCellType() == Cell.CELL_TYPE_FORMULA){
+		}else if(row.getCell(coluna).getCellTypeEnum() == CellType.FORMULA){
 			if(!String.valueOf(row.getCell(coluna).getCellFormula()).equals("")){
 				//Verifico as formulas.
 				FormulaEvaluator evaluator = ExcelReader.workbook.getCreationHelper().createFormulaEvaluator();
 				CellValue cellValue = evaluator.evaluate(row.getCell(coluna));
 				
-				switch (cellValue.getCellType()) {
-					case Cell.CELL_TYPE_BOOLEAN:
+				switch (cellValue.getCellTypeEnum()) {
+					case BOOLEAN:
 						dado = String.valueOf(cellValue.getBooleanValue());
 					    break;
-					case Cell.CELL_TYPE_NUMERIC:
+					case NUMERIC:
 						dado = String.valueOf(cellValue.getNumberValue());
 					    break;
-					case Cell.CELL_TYPE_STRING:
+					case STRING:
 						dado = String.valueOf(cellValue.getStringValue());
 					    break;
-					case Cell.CELL_TYPE_BLANK:
-					case Cell.CELL_TYPE_ERROR:
+					case BLANK:
+					case ERROR:
 					// CELL_TYPE_FORMULA will never happen
-					case Cell.CELL_TYPE_FORMULA: 
+					case FORMULA: 
 					    break;
+					default:
+						break;
 				}
 			}
 		}

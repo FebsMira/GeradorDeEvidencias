@@ -31,7 +31,7 @@ public class WordAutomacao {
 	private CustomXWPFDocument document;
 	
 	/**
-	 * Cria um documento Word através do template.
+	 * Cria um documento Word atraves do template.
 	 * @param nomeArquivo - String.
 	 * @param caminhoDoc - String.
 	 * @param caminhoTemplate - String.
@@ -52,7 +52,7 @@ public class WordAutomacao {
 	}
 	
 	/**
-	 * Pega o templete da evidência e cria um novo documento word.
+	 * Pega o templete da evidencia e cria um novo documento word.
 	 * @throws IOException
 	 */
 	private void criarDocumento(CasoDeTeste casoDeTeste){
@@ -69,10 +69,10 @@ public class WordAutomacao {
         //Defino para toda a classe o caminho da minha evidencia
         //this.caminhoDoc = this.caminhoDoc + this.nomeComHora + ".docx";
         
-        //Atualizacao para não ser colocado o dia e hora no nome do caso de teste.
+        //Atualizacao para nao ser colocado o dia e hora no nome do caso de teste.
         this.caminhoDoc = this.caminhoDoc + nomeArquivo + ".docx";
         
-        this.caminhoDoc = this.caminhoDoc.replaceAll("/", "_");
+        //this.caminhoDoc = this.caminhoDoc.replaceAll("/", "_");
 		CustomXWPFDocument document = null;
 		
         //Crio um file com o template.
@@ -81,7 +81,7 @@ public class WordAutomacao {
         //Faco uma copia do template renomeada com o nome da minha evidencia
         if(file.exists()) {
         	File copiaFile = new File(caminhoDoc);
-        	//Se o arquivo já existir irá deletar o mesmo.
+        	//Se o arquivo ja existir ira deletar o mesmo.
         	if(copiaFile.exists()){
         		copiaFile.delete();
         	}
@@ -96,17 +96,17 @@ public class WordAutomacao {
         	}
         	
         }else{
-        	Error.error = "Template não consta na pasta informada!";
-        	System.out.println("Template não consta na pasta informada!");
+        	Error.error = "Template nao consta na pasta informada!";
+        	System.out.println("Template nao consta na pasta informada!");
         }
         
         try{
         	//Insere o nome do CT na tabela um, primeira linha da primeira coluna.
             //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, this.nomeArquivo);
-            //Insere a hora de execução na tabela um, primeira linha da segunda coluna.
+            //Insere a hora de execucao na tabela um, primeira linha da segunda coluna.
             //WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 1, this.horaExecucao);
             
-            //Insere o título no documento word.
+            //Insere o titulo no documento word.
             //WordIterator.inserirTitulo(this.caminhoDoc, document, this.nomeArquivo);
             
             WordIterator.inserirDadoTabela(this.caminhoDoc, document, 0, 0, 0, "Projeto - " + casoDeTeste.getNegocio(), true);
@@ -128,7 +128,7 @@ public class WordAutomacao {
 	
 	
 	/**
-	 * Insere uma evidência no arquivo Word. Para gerar imagem é necessário passar true no parâmetro imagem.
+	 * Insere uma evidencia no arquivo Word. Para gerar imagem e necessario passar true no parametro imagem.
 	 * @param mensagem - String
 	 * @param passouFalhou - Boolean
 	 * @param imagem - Boolean
@@ -170,7 +170,7 @@ public class WordAutomacao {
 	}
 	
 	/**
-	 * Calcula a duração da execução.
+	 * Calcula a duracao da execucao.
 	 * @return String.
 	 */
 	private String calcularDuracao(){
@@ -207,12 +207,12 @@ public class WordAutomacao {
 	}
 	
 	/**
-	 * Finaliza a evidência e cria o arquivo PDF
+	 * Finaliza a evidencia e cria o arquivo PDF
 	 * @throws IOException
 	 */
 	public void finalizarEvidencia(){
 	    try{
-	    	 //Insere a duração do CT na tabela um, segunda linha, segunda coluna.
+	    	 //Insere a duracao do CT na tabela um, segunda linha, segunda coluna.
 		    WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, 0, 1, 1, calcularDuracao(), false);
 		    
 		    //Insere o Status do caso de teste na tabela.
@@ -230,12 +230,12 @@ public class WordAutomacao {
 	}
 	
 	/**
-	 * Insere dados em uma tabela especificada pelo número.
+	 * Insere dados em uma tabela especificada pelo numero.
 	 * @param caminhoDoc - String com o caminho.
 	 * @param documento - CustomXWPFDocument.
-	 * @param numeroTabela - int - Começa com 0.
-	 * @param numeroLinha - int - começa com 0.
-	 * @param numeroColuna - int - começa com 0.
+	 * @param numeroTabela - int - Comeca com 0.
+	 * @param numeroLinha - int - comeca com 0.
+	 * @param numeroColuna - int - comeca com 0.
 	 * @param dado - String a ser inserida.
 	 * @param negrito - Boolean - se o texto deve ser em negrito.
 	 * @throws IOException
@@ -245,6 +245,22 @@ public class WordAutomacao {
 			WordIterator.inserirDadoTabela(this.caminhoDoc, this.document, numeroTabela, numeroLinha, numeroColuna, dado, negrito);
 		} catch (IOException e) {
 			Error.error = e.getMessage().toString();
+			e.printStackTrace();
 		}
+	}
+
+	public void newPage() {
+		WordIterator.newPage(this.caminhoDoc, this.document);
+		
+	}
+
+	public void newTableFuncional(int numeroIterator) {
+		try {
+			WordIterator.newTableFuncional(this.caminhoDoc, this.document, numeroIterator);
+		} catch (Exception e) {
+			Error.error = e.getMessage().toString();
+			e.printStackTrace();
+		}
+		
 	}
 }
