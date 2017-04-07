@@ -30,12 +30,9 @@ public class WordIterator {
 	/**
 	 * Insere um Titulo no arquivo word
 	 * 
-	 * @param caminhoDoc
-	 *            - String
-	 * @param documento
-	 *            - CustomXWPFDocument
-	 * @param titulo
-	 *            - String
+	 * @param caminhoDoc - String
+	 * @param documento - CustomXWPFDocument
+	 * @param titulo - String
 	 * @throws IOException
 	 */
 	public static void inserirTitulo(String caminhoDoc, CustomXWPFDocument documento, String titulo)
@@ -60,12 +57,9 @@ public class WordIterator {
 	/**
 	 * Insere um texto no documento word.
 	 * 
-	 * @param caminhoDoc
-	 *            - String
-	 * @param documento
-	 *            - CustomXWPFDocument
-	 * @param texto
-	 *            - String
+	 * @param caminhoDoc - String
+	 * @param documento - CustomXWPFDocument
+	 * @param texto - String
 	 * @throws IOException
 	 */
 	public static void inserirTexto(String caminhoDoc, CustomXWPFDocument documento, String texto) throws IOException {
@@ -89,12 +83,9 @@ public class WordIterator {
 	/**
 	 * Insere uma imagem no Documento Word.
 	 * 
-	 * @param caminhoDoc
-	 *            - String
-	 * @param documento
-	 *            - CustomXWPFDocument
-	 * @param caminhoImagem
-	 *            - String
+	 * @param caminhoDoc - String
+	 * @param documento - CustomXWPFDocument
+	 * @param caminhoImagem - String
 	 * @throws IOException
 	 * @throws InvalidFormatException
 	 * @throws AWTException
@@ -123,31 +114,25 @@ public class WordIterator {
 	/**
 	 * Insere dados em uma tabela especificada pelo numero.
 	 * 
-	 * @param caminhoDoc
-	 *            - String com o caminho.
-	 * @param documento
-	 *            - CustomXWPFDocument.
-	 * @param numeroTabela
-	 *            - int - Comeca com 0.
-	 * @param numeroLinha
-	 *            - int - comeca com 0.
-	 * @param numeroColuna
-	 *            - int - comeca com 0.
-	 * @param dado
-	 *            - String a ser inserida.
+	 * @param caminhoDoc - String com o caminho.
+	 * @param documento - CustomXWPFDocument.
+	 * @param numeroTabela - int - Comeca com 0.
+	 * @param numeroLinha - int - comeca com 0.
+	 * @param numeroColuna - int - comeca com 0.
+	 * @param dado - String a ser inserida.
 	 * @throws IOException
 	 */
 	public static void inserirDadoTabela(String caminhoDoc, CustomXWPFDocument documento, int numeroTabela,
 			int numeroLinha, int numeroColuna, String dado, boolean negrito) throws IOException {
 		XWPFTable table = documento.getTableArray(numeroTabela);
 
-		XWPFRun casoDeTeste = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
-		casoDeTeste.getText(0);
-		casoDeTeste.setBold(negrito);
-		casoDeTeste.setFontSize(9);
-		casoDeTeste.setFontFamily("Verdana");
-		casoDeTeste.setColor("000000");
-		casoDeTeste.setText(" " + dado);
+		XWPFRun paragrafo = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
+		paragrafo.getText(0);
+		paragrafo.setBold(negrito);
+		paragrafo.setFontSize(9);
+		paragrafo.setFontFamily("Verdana");
+		paragrafo.setColor("000000");
+		paragrafo.setText(" " + dado);
 
 		FileOutputStream outStream = null;
 		outStream = new FileOutputStream(caminhoDoc);
@@ -156,35 +141,29 @@ public class WordIterator {
 		outStream.close();
 
 	}
-	
+
 	/**
 	 * Insere dados em uma tabela especificada pelo numero.
 	 * 
-	 * @param caminhoDoc
-	 *            - String com o caminho.
-	 * @param documento
-	 *            - CustomXWPFDocument.
-	 * @param numeroTabela
-	 *            - int - Comeca com 0.
-	 * @param numeroLinha
-	 *            - int - comeca com 0.
-	 * @param numeroColuna
-	 *            - int - comeca com 0.
-	 * @param dado
-	 *            - String a ser inserida.
+	 * @param caminhoDoc - String com o caminho.
+	 * @param documento - CustomXWPFDocument.
+	 * @param numeroTabela - int - Comeca com 0.
+	 * @param numeroLinha - int - comeca com 0.
+	 * @param numeroColuna - int - comeca com 0.
+	 * @param dado - String a ser inserida.
 	 * @throws IOException
 	 */
 	public static void inserirDadoTabelaLetraBranca(String caminhoDoc, CustomXWPFDocument documento, int numeroTabela,
 			int numeroLinha, int numeroColuna, String dado, boolean negrito) throws IOException {
 		XWPFTable table = documento.getTableArray(numeroTabela);
 
-		XWPFRun casoDeTeste = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
-		casoDeTeste.getText(0);
-		casoDeTeste.setBold(negrito);
-		casoDeTeste.setFontSize(9);
-		casoDeTeste.setFontFamily("Verdana");
-		casoDeTeste.setColor("ffffff");
-		casoDeTeste.setText(" " + dado);
+		XWPFRun paragrafo = table.getRow(numeroLinha).getCell(numeroColuna).getParagraphs().get(0).createRun();
+		paragrafo.getText(0);
+		paragrafo.setBold(negrito);
+		paragrafo.setFontSize(9);
+		paragrafo.setFontFamily("Verdana");
+		paragrafo.setColor("ffffff");
+		paragrafo.setText(" " + dado);
 
 		FileOutputStream outStream = null;
 		outStream = new FileOutputStream(caminhoDoc);
@@ -202,36 +181,38 @@ public class WordIterator {
 
 	public static void newTableFuncional(String caminhoDoc, CustomXWPFDocument document, int numeroIterator)
 			throws Exception {
-		//Cria uma nova tabela
+		// Cria uma nova tabela
 		XWPFTable table = document.createTable(7, 2);
-		
-		//Faz um merge entre celulas
+
+		// Faz um merge entre celulas
 		table.getRow(5).getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
 		table.getRow(5).getCell(1).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-		
-		int tamanho =  1440;
-		
-		//Define a altura da linha
-		table.getRow(5).setHeight((int)(tamanho*2/10)); //set height 1/10 inch.
-		
-		//Define a altura da linha
-		table.getRow(6).setHeight((int)(tamanho*2/10)); //set height 1/10 inch.
-		
-		//Cor de fundo da linha
+
+		int tamanho = 1440;
+
+		// Define a altura da linha
+		table.getRow(5).setHeight((int) (tamanho * 2 / 10)); // set height 1/10
+																// inch.
+
+		// Define a altura da linha
+		table.getRow(6).setHeight((int) (tamanho * 2 / 10)); // set height 1/10
+																// inch.
+
+		// Cor de fundo da linha
 		table.getRow(5).getCell(0).setColor("ff8000");
-		
-		//Alinha o texto dentro do paragrafo
+
+		// Alinha o texto dentro do paragrafo
 		table.getRow(5).getCell(0).getParagraphs().get(0).setAlignment(ParagraphAlignment.CENTER);
 		table.getRow(5).getCell(0).setVerticalAlignment(XWPFVertAlign.CENTER);
-		
-		//Faz um merge entre celulas
+
+		// Faz um merge entre celulas
 		table.getRow(6).getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
 		table.getRow(6).getCell(1).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-		
-		//Cor de fundo da linha
+
+		// Cor de fundo da linha
 		table.getRow(6).getCell(0).setColor("f2f2f2");
-		
-		//Tira a borda dos lados em determinada celula
+
+		// Tira a borda dos lados em determinada celula
 		table.getRow(4).getCell(0).getCTTc().addNewTcPr().addNewTcBorders().addNewLeft().setVal(STBorder.NIL);
 		table.getRow(4).getCell(0).getCTTc().addNewTcPr().addNewTcBorders().addNewRight().setVal(STBorder.NIL);
 		table.getRow(4).getCell(1).getCTTc().addNewTcPr().addNewTcBorders().addNewLeft().setVal(STBorder.NIL);
@@ -242,16 +223,16 @@ public class WordIterator {
 		inserirDadoTabela(caminhoDoc, document, numeroIterator, 2, 0, "Resultado Esperado:", true);
 		inserirDadoTabela(caminhoDoc, document, numeroIterator, 3, 0, "Resultado Obtido:", true);
 		inserirDadoTabela(caminhoDoc, document, numeroIterator, 3, 1, "-", true);
-		
+
 		inserirDadoTabelaLetraBranca(caminhoDoc, document, numeroIterator, 5, 0, "Validação", true);
-		
-		for(int i = 0; i < 4; i++){
-			//Define a largura das colunas
-			table.getRow(i).getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(tamanho*3));
-			table.getRow(i).getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(tamanho*7));
-			//Alinha o texto dentro da linha
+
+		for (int i = 0; i < 4; i++) {
+			// Define a largura das colunas
+			table.getRow(i).getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(tamanho * 3));
+			table.getRow(i).getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(tamanho * 7));
+			// Alinha o texto dentro da linha
 			table.getRow(i).getCell(0).setVerticalAlignment(XWPFVertAlign.CENTER);
-			//Define cor da linha
+			// Define cor da linha
 			table.getRow(i).getCell(0).setColor("f2f2f2");
 		}
 

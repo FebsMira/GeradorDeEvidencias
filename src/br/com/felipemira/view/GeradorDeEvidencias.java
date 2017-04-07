@@ -285,7 +285,7 @@ public class GeradorDeEvidencias extends Application{
 			    		erro = true;
 		    		}
 		    		if(erro){
-		    			alert("Atenção!", mensagem);
+		    			alert("Atenção!", mensagem2);
 		    		}else{
 		    			try {
 			    			progressBar.progressProperty().bind(servico.progressProperty());

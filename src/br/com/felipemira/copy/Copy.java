@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 public class Copy {
 	public static void copyFile(File origem, File destino) throws IOException{
 		InputStream in = new FileInputStream(origem);
@@ -20,4 +22,18 @@ public class Copy {
 		in.close();
 		out.close();
 	}
+	
+	public static File streamTofile (InputStream in, String Prefix, String Suffix) {
+		try{
+			final File tempFile = File.createTempFile(Prefix, Suffix);
+	        tempFile.deleteOnExit();
+	        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+	            IOUtils.copy(in, out);
+	        }
+	        return tempFile;
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return null;
+		}
+    }
 }
