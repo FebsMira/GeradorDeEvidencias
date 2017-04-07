@@ -1,12 +1,12 @@
 package br.com.felipemira.arquivos.office;
 
 import java.awt.AWTException;
-import java.io.BufferedReader;
+//import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+//import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -26,6 +26,7 @@ public class WordAutomacao {
 	private String nomeComHora;
 	private String horaExecucao;
 	private Calendar horaInicio;
+	@SuppressWarnings("unused")
 	private String caminhoTemplate;
 	private String caminhoImagem;
 	private String caminhoDoc;
@@ -81,7 +82,7 @@ public class WordAutomacao {
 		
 		@SuppressWarnings("static-access")
 		InputStream in = ClassLoader.getSystemClassLoader().getSystemResourceAsStream("br/com/felipemira/arquivos/office/templates/Modelo Itau.docx");
-		BufferedReader input = new BufferedReader(new InputStreamReader(in));
+		//BufferedReader input = new BufferedReader(new InputStreamReader(in));
         File file = Copy.streamTofile(in, "Modelo", "Itau.docx");
         
         //Faco uma copia do template renomeada com o nome da minha evidencia
