@@ -42,9 +42,9 @@ public class GeradorDeEvidencias extends Application{
 	private TextField txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal; //txModel
 	private Button btnExecutar;
 	private ProgressBar progressBar;
-	private ImageView imagem;
+	private ImageView imagem, inmetrics;
 	
-	private String localIconeAplicativo = "br/com/felipemira/img/Inmetrics.png";
+	private String localIconeAplicativo = "br/com/felipemira/img/iconeItau.gif";
 	
 	
 	private static Stage stage;
@@ -89,6 +89,8 @@ public class GeradorDeEvidencias extends Application{
 		stage.resizableProperty().set(false);
 		applicationIcon = new Image(localIconeAplicativo);
 		stage.getIcons().add(applicationIcon);
+		stage.setMaxWidth(800);
+		stage.setMaxHeight(330);
 		stage.show();
 		
 		initLayout();
@@ -106,7 +108,7 @@ public class GeradorDeEvidencias extends Application{
 	private void initComponents(){
 		pane = new AnchorPane();
 		pane.setPrefSize(800, 300);
-		pane.setStyle("-fx-background-color:linear-gradient(from 200% 0% to 100% 100%, white 0%, #FFD401 100%)");
+		pane.setStyle("-fx-background-color:#f97a18");
 		
 		
 		/*labelModel = new Label("Local do Modelo.docx:");
@@ -148,14 +150,17 @@ public class GeradorDeEvidencias extends Application{
 		btnExecutar = new Button("Executar");
 		
 		imagem = new ImageView();
-		imagem.setImage(new Image("br/com/felipemira/img/Inmetrics2.jpg"));
+		imagem.setImage(new Image("br/com/felipemira/img/logoItau.png"));
+		
+		inmetrics = new ImageView();
+		inmetrics.setImage(new Image("br/com/felipemira/img/Inmetrics2.png"));
 		
 		labelBy = new Label("Criado por Felipe Mira");
 		
 		progressBar = new ProgressBar();
 		progressBar.setProgress(new Float(0f));
 		
-		pane.getChildren().addAll(labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, labelBy);//, labelBy, labelModel, txModel);
+		pane.getChildren().addAll(labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, inmetrics, labelBy);//, labelBy, labelModel, txModel);
 		scene = new Scene(pane);
 	}
 	
@@ -195,15 +200,19 @@ public class GeradorDeEvidencias extends Application{
 		btnExecutar.setLayoutY(210);
 		
 		imagem.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 330);
-		imagem.setFitHeight(70);
-		imagem.setFitWidth(170);
-		imagem.setLayoutY(190);
+		imagem.setFitHeight(100);
+		imagem.setFitWidth(100);
+		imagem.setLayoutY(150);
 		
 		progressBar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
 		progressBar.setLayoutY(280);
 		
+		inmetrics.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
+		inmetrics.setFitHeight(40);
+		inmetrics.setFitWidth(100);
+		inmetrics.setLayoutY(210);
 		
-		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 320);
+		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 350);
 		labelBy.setScaleY(0.5);
 		labelBy.setScaleX(0.5);
 		labelBy.setLayoutY(280);

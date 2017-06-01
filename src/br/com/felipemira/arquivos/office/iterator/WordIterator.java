@@ -14,16 +14,21 @@ import java.math.BigInteger;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.usermodel.Document;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
 
 import br.com.felipemira.arquivos.office.custom.document.CustomXWPFDocument;
+
 
 public class WordIterator {
 
@@ -100,9 +105,9 @@ public class WordIterator {
 		// Insire ela no documento do word
 		XWPFParagraph paragraphX = documento.getLastParagraph();
 		paragraphX.setAlignment(ParagraphAlignment.LEFT);
-		String blipId = paragraphX.getDocument().addPictureData(new FileInputStream(new File(caminhoImagem)),
-				Document.PICTURE_TYPE_JPEG);
-		documento.createPicture(blipId, documento.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), 260, 145);
+		
+		XWPFRun run = paragraphX.createRun();
+		run.addPicture(new FileInputStream(caminhoImagem), CustomXWPFDocument.PICTURE_TYPE_PNG, "evidencia.png",Units.toEMU(520), Units.toEMU(290));
 
 		FileOutputStream outStream = null;
 
@@ -185,8 +190,7 @@ public class WordIterator {
 		XWPFTable table = document.createTable(7, 2);
 
 		// Faz um merge entre celulas
-		table.getRow(5).getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-		table.getRow(5).getCell(1).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+		mergeCellHorizontally(table, 5, 0, 1);
 
 		int tamanho = 1440;
 
@@ -206,8 +210,7 @@ public class WordIterator {
 		table.getRow(5).getCell(0).setVerticalAlignment(XWPFVertAlign.CENTER);
 
 		// Faz um merge entre celulas
-		table.getRow(6).getCell(0).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-		table.getRow(6).getCell(1).getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
+		mergeCellHorizontally(table, 6, 0, 1);
 
 		// Cor de fundo da linha
 		table.getRow(6).getCell(0).setColor("f2f2f2");
@@ -236,5 +239,53 @@ public class WordIterator {
 			table.getRow(i).getCell(0).setColor("f2f2f2");
 		}
 
+	}
+	
+	static void mergeCellVertically(XWPFTable table, int col, int fromRow, int toRow) {
+		for (int rowIndex = fromRow; rowIndex <= toRow; rowIndex++) {
+			CTVMerge vmerge = CTVMerge.Factory.newInstance();
+			if (rowIndex == fromRow) {
+				// The first merged cell is set with RESTART merge value
+				vmerge.setVal(STMerge.RESTART);
+			} else {
+				// Cells which join (merge) the first one, are set with CONTINUE
+				vmerge.setVal(STMerge.CONTINUE);
+			}
+			XWPFTableCell cell = table.getRow(rowIndex).getCell(col);
+			// Try getting the TcPr. Not simply setting an new one every time.
+			CTTcPr tcPr = cell.getCTTc().getTcPr();
+			if (tcPr != null) {
+				tcPr.setVMerge(vmerge);
+			} else {
+				// only set an new TcPr if there is not one already
+				tcPr = CTTcPr.Factory.newInstance();
+				tcPr.setVMerge(vmerge);
+				cell.getCTTc().setTcPr(tcPr);
+			}
+		}
+	}
+
+	static void mergeCellHorizontally(XWPFTable table, int row, int fromCol, int toCol) {
+		for (int colIndex = fromCol; colIndex <= toCol; colIndex++) {
+			CTHMerge hmerge = CTHMerge.Factory.newInstance();
+			if (colIndex == fromCol) {
+				// The first merged cell is set with RESTART merge value
+				hmerge.setVal(STMerge.RESTART);
+			} else {
+				// Cells which join (merge) the first one, are set with CONTINUE
+				hmerge.setVal(STMerge.CONTINUE);
+			}
+			XWPFTableCell cell = table.getRow(row).getCell(colIndex);
+			// Try getting the TcPr. Not simply setting an new one every time.
+			CTTcPr tcPr = cell.getCTTc().getTcPr();
+			if (tcPr != null) {
+				tcPr.setHMerge(hmerge);
+			} else {
+				// only set an new TcPr if there is not one already
+				tcPr = CTTcPr.Factory.newInstance();
+				tcPr.setHMerge(hmerge);
+				cell.getCTTc().setTcPr(tcPr);
+			}
+		}
 	}
 }
