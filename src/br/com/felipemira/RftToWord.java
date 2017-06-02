@@ -40,7 +40,7 @@ public class RftToWord {
 			
 			WordAutomacao word = new WordAutomacao(casoDeTeste.getSiglaCasoDeTeste() + " - " + casoDeTeste.getIdCasoDeTeste()
 			, caminhoSalvar + "/"
-			, caminhoModelo + "/Modelo " + /*casoDeTeste.getProcedimentosDeExecucao().size()*/ "Itau.docx"
+			, caminhoModelo + "/Modelo " + /*casoDeTeste.getProcedimentosDeExecucao().size()*/ "Mira.docx"
 			, caminhoModelo + "/evidencia.png", casoDeTeste);
 			
 			System.out.println("\nCenario Caso de teste: " + casoDeTeste.getCenarioDeTeste() + "\n");
