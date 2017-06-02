@@ -42,9 +42,9 @@ public class GeradorDeEvidencias extends Application{
 	private TextField txSalvar, txArquivoRTF, txLinhaInicio, txLinhaFinal; //txModel
 	private Button btnExecutar;
 	private ProgressBar progressBar;
-	private ImageView imagem, inmetrics;
+	//private ImageView imagem;
 	
-	private String localIconeAplicativo = "br/com/felipemira/img/iconeItau.gif";
+	//private String localIconeAplicativo = "br/com/felipemira/img/imagem.gif";
 	
 	
 	private static Stage stage;
@@ -87,8 +87,8 @@ public class GeradorDeEvidencias extends Application{
 		stage.setScene(scene);
 		stage.setTitle("Gerador de Evidências");
 		stage.resizableProperty().set(false);
-		applicationIcon = new Image(localIconeAplicativo);
-		stage.getIcons().add(applicationIcon);
+		//applicationIcon = new Image(localIconeAplicativo);
+		//stage.getIcons().add(applicationIcon);
 		stage.setMaxWidth(800);
 		stage.setMaxHeight(330);
 		stage.show();
@@ -149,18 +149,15 @@ public class GeradorDeEvidencias extends Application{
 		
 		btnExecutar = new Button("Executar");
 		
-		imagem = new ImageView();
-		imagem.setImage(new Image("br/com/felipemira/img/logoItau.png"));
-		
-		inmetrics = new ImageView();
-		inmetrics.setImage(new Image("br/com/felipemira/img/Inmetrics2.png"));
+		//imagem = new ImageView();
+		//imagem.setImage(new Image("br/com/felipemira/img/logo.png"));
 		
 		labelBy = new Label("Criado por Felipe Mira");
 		
 		progressBar = new ProgressBar();
 		progressBar.setProgress(new Float(0f));
 		
-		pane.getChildren().addAll(labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, imagem, inmetrics, labelBy);//, labelBy, labelModel, txModel);
+		pane.getChildren().addAll(labelSalvar, txSalvar, labelArquivoRTF, txArquivoRTF, labelLinhaInicio, txLinhaInicio, labelLinhaFim, txLinhaFinal, btnExecutar, progressBar, labelBy);//, labelBy, labelModel, txModel);
 		scene = new Scene(pane);
 	}
 	
@@ -199,18 +196,8 @@ public class GeradorDeEvidencias extends Application{
 		btnExecutar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 80);
 		btnExecutar.setLayoutY(210);
 		
-		imagem.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 330);
-		imagem.setFitHeight(100);
-		imagem.setFitWidth(100);
-		imagem.setLayoutY(150);
-		
 		progressBar.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
 		progressBar.setLayoutY(280);
-		
-		inmetrics.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) + 260);
-		inmetrics.setFitHeight(40);
-		inmetrics.setFitWidth(100);
-		inmetrics.setLayoutY(210);
 		
 		labelBy.setLayoutX(((pane.getWidth() - btnExecutar.getWidth()) / 2) - 350);
 		labelBy.setScaleY(0.5);
@@ -352,7 +339,7 @@ public class GeradorDeEvidencias extends Application{
     	alert.setContentText(stage.getTitle().toString());
     	
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(localIconeAplicativo));
+		//stage.getIcons().add(new Image(localIconeAplicativo));
     	
     	alert.showAndWait().ifPresent(rs -> {
     	    if (rs == ButtonType.OK) {
@@ -369,7 +356,7 @@ public class GeradorDeEvidencias extends Application{
     	alert.setContentText(stage.getTitle().toString());
     	
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(localIconeAplicativo));
+		//stage.getIcons().add(new Image(localIconeAplicativo));
     	
     	alert.showAndWait().ifPresent(rs -> {
     	    if (rs == ButtonType.OK) {
